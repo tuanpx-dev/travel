@@ -1,16 +1,26 @@
 <template>
   <div class="container home">
-    <div class="row home-header">
-      <div class="col-md-3">
-        <button class="button-ask">Ask</button>
-      </div>
-
-      <input class="col-md-6" type="search" />
-    </div>
+    <Header/>
     <div class="row home-content">
       <div class="row home-list-qa col-md-9">
-        <div class="home-sidebar col-md-4"></div>
+        <div class="home-sidebar col-md-4">
+          <select name="" id="" class="select-region">
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="audi">Audi</option>
+          </select>
+          <div>
+            <div v-for="option in listOption" :key="option.value" class="home-add-option">
+              <input type="checkbox">
+              <p>{{ option.name }}</p>
+            </div>
+          </div>
+        </div>
         <div class="col-md-8 list-qa">
+          <div class="home-header">
+            <input type="search" placeholder="search"/>
+          </div>
           <div class="home-menu">
             <button class="home-menu-page">Popular</button>
             <button class="home-menu-page">New</button>
@@ -27,6 +37,7 @@
 </template>
 
 <script>
+import Header from '../header/header'
 import request from '../../../request/request'
 import Question from './Question'
 
@@ -34,7 +45,8 @@ export default {
   name: 'Home',
 
   components: {
-    Question
+    Question,
+    Header
   },
 
   data () {
@@ -46,6 +58,30 @@ export default {
         },
         {
           id: 2
+        },
+        {
+          id: 3
+        },
+        {
+          id: 4
+        }
+      ],
+      listOption: [
+        {
+          name: 'hotel',
+          value: 1
+        },
+        {
+          name: 'food',
+          value: 2
+        },
+        {
+          name: 'hotel',
+          value: 3
+        },
+        {
+          name: 'food',
+          value: 4
         }
       ]
     }
@@ -68,14 +104,8 @@ export default {
   margin-bottom: 30px;
 }
 
-.button-ask {
-  padding: 10px 30px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  background-color: white;
-  font-size: 24px;
-  font-weight: 800;
-  outline: none;
+.home-content {
+  margin-top: -40px;
 }
 
 .home-header input {
@@ -83,15 +113,37 @@ export default {
   border-radius: 10px;
   height: 40px;
   outline: none;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .home-sidebar {
   border: 1px solid gray;
   max-height: 500px;
+  text-align: left;
+  margin-top: 73px;
+}
+
+.select-region {
+  width: 70%;
+  height: 35px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  background-color: white;
+  outline: none;
+}
+
+.home-add-option {
+  display: flex;
+  margin: 5px;
+}
+
+.home-add-option input[type="checkbox"]{
+  margin-right: 20px;
 }
 
 .list-qa {
-  margin-top: -35px;
 }
 
 .home-list {

@@ -29,7 +29,7 @@
             <input type="text" placeholder="Password" class="login-value" />
             <div class="action-login-resset">
               <button class="resset-password">Password Reset</button>
-              <button class="action-login">Login</button>
+              <button class="action-login" @click="login">Login</button>
             </div>
           </div>
         </div>
@@ -57,13 +57,18 @@ export default {
       url: '/',
       method: 'get'
     }).then(res => {
-      console.log('res', res)
+      let user = JSON.stringify({token: '123'})
+      localStorage.setItem('user', user)
     })
   },
 
   methods: {
     showPopup () {
       this.$modal.show('create-new-account')
+    },
+
+    login () {
+      this.$router.push({ path: '/home' })
     }
   }
 }
