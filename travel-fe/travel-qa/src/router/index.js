@@ -9,6 +9,10 @@ Vue.use(Router)
 let router = new Router({
   routes: [
     {
+      path: '*',
+      redirect: '/home'
+    },
+    {
       path: '/',
       name: 'Login',
       component: Login,
@@ -35,10 +39,11 @@ let router = new Router({
   ],
   mode: 'history'
 })
+
 export default router
+
 router.beforeEach((to, from, next) => {
   var user = JSON.parse(localStorage.getItem('user'))
-  console.log(to.meta.requiresAuth)
   if (to.meta.requiresAuth === false) {
     next()
   } else {
@@ -46,7 +51,6 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next('/')
-      // next()
     }
   }
 })
