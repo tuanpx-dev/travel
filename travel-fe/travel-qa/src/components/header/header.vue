@@ -3,11 +3,15 @@
     <div class="col-md-3">
       <div>
         <p class="logo">TravelQA</p>
-        <button class="button-ask">Ask</button>
+        <button class="button-ask" @click="addAsk()">Ask</button>
       </div>
     </div>
     <div class="col-md-6"></div>
     <div class="col-md-3"></div>
+
+    <modal name="create-new-ask">
+      create-new-a-ask
+    </modal>
   </div>
 </template>
 
@@ -15,17 +19,25 @@
 export default {
   name: 'Header',
 
-  data() {
-    return {};
+  data () {
+    return {}
   },
 
-  methods: {}
-};
+  methods: {
+    addAsk () {
+      this.$modal.show('create-new-ask')
+    }
+  }
+}
 </script>
 
 <style lang="css" scoped>
 .header {
   margin-top: 20px;
+}
+
+.header .col-md-3{
+  z-index: 100;
 }
 
 .logo {
