@@ -6,9 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.users import models as user_models
 from apps.users import serializers as user_sers
-from apps.users import utils as user_utils
+from travel.auth.token import create_token, decode_token
 
 _logger = logging.getLogger(__name__)
 
@@ -29,10 +28,10 @@ class LoginEmailAPI(APIView):
             _logger.error('Incorrect email: {} or password: ******'.format(email))
             return Response('Incorrect email or password', status=status.HTTP_401_UNAUTHORIZED)
 
-        token = user_models.Token.objects.create(user=user)
+        jwt_token = create_token(user.id, user.username)
         data = {
-            'access_token': token.key,
-            'expired_time': user_utils.get_expired_time(token),
+            'access_token': jwt_token,
+            'expired_time': decode_token(jwt_token).expire_at,
             'user': user
         }
         serializer = user_sers.TokenSerializer(data)
