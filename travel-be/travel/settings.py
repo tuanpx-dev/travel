@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'travel_db',
         'USER': 'travel_user',
         'PASSWORD': 'travel_user',
-        'HOST': '34.87.111.216',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
