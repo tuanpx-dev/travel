@@ -7,6 +7,10 @@ class LoginEmailValidator(serializers.Serializer):
     password = serializers.CharField(required=True, allow_blank=False)
 
 
+class LoginFacebookValidator(serializers.Serializer):
+    fb_access_token = serializers.CharField(required=True, allow_blank=False)
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user_models.User
