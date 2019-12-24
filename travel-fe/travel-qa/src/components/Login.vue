@@ -25,11 +25,11 @@
           </div>
           <div class="login-form col-md-6 col-xs-12">
             <p class="login-text">Login</p>
-            <input type="text" placeholder="Email" class="login-value" />
-            <input type="text" placeholder="Password" class="login-value" />
+            <input type="text" placeholder="Email" v-model="email" class="login-value" />
+            <input type="text" placeholder="Password" v-model="password" class="login-value" />
             <div class="action-login-resset">
               <button class="resset-password">Password Reset</button>
-              <button class="action-login" @click="login">Login</button>
+              <button class="action-login" @click="actionLogin()" @keyup.enter="actionLogin()">Login</button>
             </div>
           </div>
         </div>
@@ -48,18 +48,14 @@ export default {
   name: 'Login',
   data () {
     return {
-      loading: false
+      loading: false,
+      login: {
+        email: '1234',
+        password: '1234'
+      },
+      email: '',
+      password: ''
     }
-  },
-
-  created () {
-    request({
-      url: '/',
-      method: 'get'
-    }).then(res => {
-      let user = JSON.stringify({token: '123'})
-      localStorage.setItem('user', user)
-    })
   },
 
   methods: {
@@ -67,7 +63,25 @@ export default {
       this.$modal.show('create-new-account')
     },
 
-    login () {
+    actionLogin () {
+      const data = {
+        email: this.email,
+        password: this.password
+      }
+
+      if (this.login.email !== this.email || this.login.password !== this.password) {
+        return
+      }
+
+      console.log('data', data)
+      request({
+        url: '/',
+        method: 'get',
+        body: JSON.stringify(data)
+      }).then(res => {
+        let user = JSON.stringify({token: '123'})
+        localStorage.setItem('user', user)
+      })
       this.$router.push({ path: '/home' })
     }
   }

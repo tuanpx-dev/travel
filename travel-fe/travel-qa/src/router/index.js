@@ -13,7 +13,7 @@ let router = new Router({
       redirect: '/home'
     },
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login,
       meta: {
@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
     if (user != null) {
       next()
     } else {
-      next('/')
+      next('/home')
     }
   }
 })

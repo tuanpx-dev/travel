@@ -11,7 +11,7 @@
             <option value="audi">Audi</option>
           </select>
           <div>
-            <div v-for="option in listOption" :key="option.value" class="home-add-option">
+            <div v-for="option in options" :key="option.value" class="home-add-option">
               <input type="checkbox">
               <p>{{ option.name }}</p>
             </div>
@@ -23,10 +23,10 @@
           </div>
           <div class="home-menu">
             <button class="home-menu-page">Popular</button>
-            <button class="home-menu-page">New</button>
+            <button class="home-menu-page new">New</button>
           </div>
           <div class="home-list" v-for="question in questions" :key="question.id">
-            <Question :question="question"/>
+            <Question :question="question" :page="'home'"/>
           </div>
         </div>
       </div>
@@ -40,6 +40,7 @@
 import Header from '../header/header'
 import request from '../../../request/request'
 import Question from './Question'
+import { QUESTIONS, OPTIONS } from '../Constant'
 
 export default {
   name: 'Home',
@@ -52,38 +53,8 @@ export default {
   data () {
     return {
       loading: false,
-      questions: [
-        {
-          id: 1
-        },
-        {
-          id: 2
-        },
-        {
-          id: 3
-        },
-        {
-          id: 4
-        }
-      ],
-      listOption: [
-        {
-          name: 'hotel',
-          value: 1
-        },
-        {
-          name: 'food',
-          value: 2
-        },
-        {
-          name: 'hotel',
-          value: 3
-        },
-        {
-          name: 'food',
-          value: 4
-        }
-      ]
+      questions: QUESTIONS,
+      options: OPTIONS
     }
   },
 
@@ -153,8 +124,13 @@ export default {
   text-align: left;
 }
 
+.home-menu .new{
+  margin-left: -6px;
+}
+
 .home-menu-page {
   padding: 5px 15px;
   color: black;
+  background-color: white;
 }
 </style>
