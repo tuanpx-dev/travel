@@ -187,8 +187,11 @@ LOGGING = {
     }
 }
 
-# How long buy course (days)
-EXPIRED_COURSE_TIME = 30
+
+EXPIRED_TOKEN_TIME = 30
+# URL get profile on facebook
+URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
+
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
