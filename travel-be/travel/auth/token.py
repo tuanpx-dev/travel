@@ -90,3 +90,28 @@ class Token(object):
         if self.user is None:
             return False
         return True
+
+class UnauthorizedToken(object):
+
+    @property
+    def id(self):
+        return None
+
+    @property
+    def username(self):
+        return None
+
+    @property
+    def expire_at(self):
+        return None
+
+    @property
+    def created_at(self):
+        return None
+
+    @property
+    def user(self):
+        return None
+
+    def is_valid(self):
+        return False

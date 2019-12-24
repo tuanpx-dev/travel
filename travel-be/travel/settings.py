@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ad3idydg74=4t4!@o5#1uf1jipbld*hqx+eua_0!n^el*cvd+r'
 
-EXPIRED_TOKEN_TIME = 7 * 24 * 3600 # 7 day
+EXPIRED_TOKEN_TIME = 7 * 24 * 3600  # 7 day
 
 IS_PRODUCTION = 'INFO'
 IS_STAGING = 'DEBUG'
@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'travel.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'travel_db',
-        'USER': 'travel_user',
-        'PASSWORD': 'travel_user',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hnt_db_test',
+        'USER': 'ntq01',
+        'PASSWORD': 'ntq123456',
+        'HOST': '192.168.16.87',
+        'PORT': '3306',
     }
 }
 
@@ -185,3 +185,47 @@ LOGGING = {
 
 # How long buy course (days)
 EXPIRED_COURSE_TIME = 30
+
+REST_FRAMEWORK = {'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'}
+
+SWAGGER_SETTINGS = {
+    'exclude_url_names': [],
+    'exclude_namespaces': [],
+    'api_version': '0.1',
+    'api_path': '/',
+    'relative_paths': False,
+    'enabled_methods': [
+        'get',
+        'post',
+        'put',
+        'patch',
+        'delete'
+    ],
+    'api_key': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization'
+    },
+    'is_authenticated': False,
+    'is_superuser': False,
+    'unauthenticated_user': 'django.contrib.auth.models.AnonymousUser',
+    'permission_denied_handler': None,
+    'resource_access_handler': None,
+    'base_path': 'helloreverb.com/docs',
+    'info': {
+        'contact': 'apiteam@wordnik.com',
+        'description': 'This is a sample server Petstore server. '
+                       'You can find out more about Swagger at '
+                       '<a href="http://swagger.wordnik.com">'
+                       'http://swagger.wordnik.com</a> '
+                       'or on irc.freenode.net, #swagger. '
+                       'For this sample, you can use the api key '
+                       '"special-key" to test '
+                       'the authorization filters',
+        'license': 'Apache 2.0',
+        'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+        'termsOfServiceUrl': 'http://helloreverb.com/terms/',
+        'title': 'Swagger Sample App',
+    },
+    'doc_expansion': 'none',
+}

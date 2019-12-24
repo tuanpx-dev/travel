@@ -1,7 +1,6 @@
 import re
 import logging
-from rest_framework import exceptions
-from travel.auth.token import decode_token
+from travel.auth.token import decode_token, UnauthorizedToken
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,7 @@ class AuthenticationMiddleware(object):
     def _authenticate(self, request):
         auth = request.META.get('HTTP_AUTHORIZATION', None)
         if auth is None:
-            raise exceptions.AuthenticationFailed("Authorization header must be supplied.")
+            return UnauthorizedToken()
         raw_token = self._parse_authorization_header(auth)
         return decode_token(raw_token)
 

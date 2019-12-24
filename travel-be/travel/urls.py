@@ -22,6 +22,6 @@ schema_view = get_swagger_view(title='Travel API docs')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api_docs', schema_view),
-    path('auth/login_email', LoginEmailAPI.as_view()),
+    path('api_docs/', schema_view),
+    path('auth/login_email/', LoginEmailAPI.as_view({'post':'post'})),
 ]
