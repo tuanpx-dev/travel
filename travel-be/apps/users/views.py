@@ -39,6 +39,35 @@ class LoginEmailAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class LoginFacebookAPI(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        validator = user_sers.LoginFacebookValidator(data=request.data)
+        if not validator.is_valid():
+            return Response(validator.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        fb_access_token = validator.validated_data['fb_access_token']
+        try:
+            profiles = user_utils.get_facebook_profile(fb_access_token)
+            fb_id = profiles['id']
+            user_name = profiles['name']
+        except Exception:
+            return Response('Incorrect facebook id', status=status.HTTP_401_UNAUTHORIZED)
+        user, created = user_models.User.objects.get_or_create(
+            facebook_id=fb_id,
+            default={'username': user_name}
+        )
+        token = user_models.Token.objects.create(user=user)
+        data = {
+            'access_token': token.key,
+            'expired_time': user_utils.get_expired_time(token),
+            'user': user
+        }
+        serializer = user_sers.TokenSerializer(data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # TODO create API
 class GetProfile(APIView):
 
