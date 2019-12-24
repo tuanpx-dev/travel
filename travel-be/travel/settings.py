@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'travel.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hnt_db_test',
-        'USER': 'ntq01',
-        'PASSWORD': 'ntq123456',
-        'HOST': '192.168.16.87',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'travel_db',
+        'USER': 'travel_user',
+        'PASSWORD': 'travel_user',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
