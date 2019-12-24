@@ -15,7 +15,7 @@ class User(AbstractUser):
 
     display_name = models.CharField(blank=True, null=True, max_length=150)
     email = models.EmailField(max_length=150, blank=True, null=True, unique=True)
-    age = models.PositiveSmallIntegerField()
+    age = models.PositiveSmallIntegerField(null=True)
     facebook_id = models.CharField(blank=True, null=True, max_length=1000)
     area = models.TextField(blank=True, null=True)
     category = models.TextField(blank=True, null=True)
@@ -23,7 +23,7 @@ class User(AbstractUser):
     place = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField()
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'user'
