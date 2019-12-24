@@ -33,30 +33,3 @@ class Interest(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     name = models.TextField(blank=True, null=True)
     value = models.TextField(blank=True, null=True)
-
-
-class Token(models.Model):
-    """
-    The default authorization token model.
-    """
-    key = models.CharField(_("Key"), max_length=TOKEN_LENGTH, primary_key=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='tokens',
-        on_delete=models.CASCADE, verbose_name=_("User")
-    )
-    created = models.DateTimeField(_("Created"), auto_now_add=True)
-
-    class Meta:
-        db_table = 'token'
-
-    def save(self, *args, **kwargs):
-        if not self.key:
-            self.key = self.generate_key()
-        return super(Token, self).save(*args, **kwargs)
-
-    def generate_key(self):
-        num_bytes = TOKEN_LENGTH // 2
-        return binascii.hexlify(os.urandom(num_bytes)).decode()
-
-    def __str__(self):
-        return 'Token (user {}): {}'.format(self.user_id, self.key)

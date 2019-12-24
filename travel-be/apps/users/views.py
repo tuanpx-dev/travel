@@ -1,22 +1,26 @@
 import logging
 
-from django.contrib.auth import authenticate
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework. viewsets import GenericViewSet
 
-from apps.users import models as user_models
 from apps.users import serializers as user_sers
-from apps.users import utils as user_utils
+from apps.users.models import User
+from travel.auth.token import create_token, decode_token
 
 _logger = logging.getLogger(__name__)
 
 
-class LoginEmailAPI(APIView):
+class LoginEmailAPI(GenericViewSet):
     permission_classes = (permissions.AllowAny,)
+    serializer_class = user_sers.LoginEmailValidator
 
     def post(self, request, format=None):
+        """
+        api login with email:
+        """
         validator = user_sers.LoginEmailValidator(data=request.data)
         if not validator.is_valid():
             _logger.error(validator.errors)
@@ -24,15 +28,15 @@ class LoginEmailAPI(APIView):
 
         email = validator.validated_data['email']
         password = validator.validated_data['password']
-        user = authenticate(email=email, password=password)
-        if not user:
+        user = User.objects.filter(email=email).first()
+        if user is None or user.check_password(password) == False:
             _logger.error('Incorrect email: {} or password: ******'.format(email))
             return Response('Incorrect email or password', status=status.HTTP_401_UNAUTHORIZED)
 
-        token = user_models.Token.objects.create(user=user)
+        jwt_token = create_token(user.id, user.username)
         data = {
-            'access_token': token.key,
-            'expired_time': user_utils.get_expired_time(token),
+            'access_token': jwt_token.decode('utf-8'),
+            'expired_time': decode_token(jwt_token).expire_at,
             'user': user
         }
         serializer = user_sers.TokenSerializer(data)
