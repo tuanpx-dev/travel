@@ -1,5 +1,5 @@
 import functools
-from django.http import JsonResponse
+from django.http import HttpResponse
 
 
 def auth_required(view_func):
@@ -7,5 +7,5 @@ def auth_required(view_func):
     def _auth_required(request, *args, **kwargs):
         if request.token.is_valid():
             return view_func(request, *args, **kwargs)
-        return JsonResponse(status=401)
+        return HttpResponse(status=401)
     return _auth_required
