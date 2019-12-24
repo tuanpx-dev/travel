@@ -21,6 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ad3idydg74=4t4!@o5#1uf1jipbld*hqx+eua_0!n^el*cvd+r'
 
+EXPIRED_TOKEN_TIME = 7 * 24 * 3600  # 7 day
+
 IS_PRODUCTION = 'INFO'
 IS_STAGING = 'DEBUG'
 IS_TESTING = 'ERROR'
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'rest_framework_swagger',
+    'rest_framework',
     'apps.users',
 ]
 
@@ -51,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'travel.auth.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'travel.urls'
@@ -179,7 +183,23 @@ LOGGING = {
     }
 }
 
-# How long buy course (days)
+
 EXPIRED_TOKEN_TIME = 30
 # URL get profile on facebook
 URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': ()
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
