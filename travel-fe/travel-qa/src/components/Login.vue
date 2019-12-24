@@ -12,7 +12,7 @@
               <p>
                 <i class="fa fa-facebook-square"></i>
               </p>
-              <p>Login with facebook</p>
+              <p @click="loginFacebook">Login with facebook</p>
             </div>
             <div class="login-new-account">
               If tou are not a user,
@@ -59,6 +59,21 @@ export default {
   },
 
   methods: {
+    loginFacebook () {
+      let self = this
+      FB.login(function (response) {
+        if (response.authResponse) {
+          console.log('Welcome!  Fetching your information.... ')
+          console.log(response)
+          FB.api('/me', function (response) {
+            self.$router.push({ path: '/home' })
+          })
+        } else {
+          console.log('User cancelled login or did not fully authorize.')
+        }
+      })
+    },
+
     showPopup () {
       this.$modal.show('create-new-account')
     },
