@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework_swagger.views import get_swagger_view
+from apps.users.views import LoginEmailAPI, LoginFacebookAPI
+
+schema_view = get_swagger_view(title='Travel API docs')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api_docs/', schema_view),
+    path('auth/login_email/', LoginEmailAPI.as_view({'post': 'post'})),
+    path('auth/login_fb/', LoginFacebookAPI.as_view({'post': 'post'})),
 ]
