@@ -29,7 +29,7 @@ let router = new Router({
       }
     },
     {
-      path: '/home',
+      path: '/',
       name: 'Home',
       component: Home,
       meta: {
@@ -43,7 +43,11 @@ let router = new Router({
 export default router
 
 router.beforeEach((to, from, next) => {
-  var user = JSON.parse(localStorage.getItem('user'))
+  var user = null
+  if (localStorage.getItem('user')) {
+    user = JSON.parse(localStorage.getItem('user'))
+  }
+
   if (to.meta.requiresAuth === false) {
     next()
   } else {

@@ -1,23 +1,31 @@
 import axios from 'axios'
-
-let token = '1'
-
+let user = JSON.parse(localStorage.getItem('user'))
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  timeout: 5000 // request timeout
+  baseURL: 'http://34.87.111.216:8000',
+  timeout: 0,
+  headers: {
+    'Content-Type': 'application/json'
+  }
 })
-
 // request interceptor
 service.interceptors.request.use(
   config => {
-    if (token) {
-      config.headers['X-Token'] = token
+    config.headers['Authorization'] = 'Bearer '
+    if (user) {
+      config.headers['Authorization'] = 'Bearer ' + user.data.access_token
     }
+
     return config
   },
   error => {
-    console.log(error) // for debug
+    return Promise.reject(error)
+  }
+)
+
+service.interceptors.response.use(
+  response => response,
+  error => {
     return Promise.reject(error)
   }
 )

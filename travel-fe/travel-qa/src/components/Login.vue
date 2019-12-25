@@ -44,8 +44,7 @@
 </template>
 
 <script>
-// import request from '../../request/request'
-import axios from 'axios'
+import request from '../../request/request'
 export default {
   name: 'Login',
   data () {
@@ -70,14 +69,23 @@ export default {
             let data = {
               fb_access_token: response.authResponse.accessToken
             }
-            axios.post('http://34.87.111.216:8000/auth/login_fb/', data)
-              .then((response) => {
-                localStorage.setItem('user', JSON.stringify(response))
-                self.$router.push({ path: '/home' })
+
+            request({
+              url: '/auth/login_fb/',
+              method: 'post',
+              data: JSON.stringify(data)
+            })
+              .then(res => {
+                localStorage.setItem('user', JSON.stringify(res))
+                self.$router.push({ path: '/' })
               })
               .catch((e) => {
+                if (e.response) {
+                  self.error = 'Enter a valid email address and password.'
+                }
+
                 if (e.response.status === '401') {
-                  self.$router.push({ path: '/' })
+                  self.$router.push({ path: '/login' })
                 }
               })
           })
@@ -99,19 +107,14 @@ export default {
         password: this.password
       }
 
-      // request({
-      //   url: '/auth/login_email/',
-      //   method: 'post',
-      //   body: JSON.stringify(data)
-      // }).then(res => {
-      //   localStorage.setItem('user', {user: res})
-      // })
-      // this.$router.push({ path: '/home' })
-
-      axios.post('http://34.87.111.216:8000/auth/login_email/', data)
-        .then((response) => {
-          localStorage.setItem('user', JSON.stringify(response))
-          this.$router.push({ path: '/home' })
+      request({
+        url: '/auth/login_email/',
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          localStorage.setItem('user', JSON.stringify(res))
+          this.$router.push({ path: '/' })
         })
         .catch((e) => {
           if (e.response) {
@@ -119,7 +122,7 @@ export default {
           }
 
           if (e.response.status === '401') {
-            this.$router.push({ path: '/' })
+            this.$router.push({ path: '/login' })
           }
         })
     }
