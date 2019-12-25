@@ -10,7 +10,7 @@ let router = new Router({
   routes: [
     {
       path: '*',
-      redirect: '/home'
+      redirect: '/login'
     },
     {
       path: '/login',
@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
     if (user != null) {
       next()
     } else {
-      next('/home')
+      next('/login')
     }
   }
 })

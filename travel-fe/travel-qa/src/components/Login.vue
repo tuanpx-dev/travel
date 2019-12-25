@@ -12,7 +12,7 @@
               <p>
                 <i class="fa fa-facebook-square"></i>
               </p>
-              <p>Login with facebook</p>
+              <p @click="loginFacebook">Login with facebook</p>
             </div>
             <div class="login-new-account">
               If tou are not a user,
@@ -26,7 +26,8 @@
           <div class="login-form col-md-6 col-xs-12">
             <p class="login-text">Login</p>
             <input type="text" placeholder="Email" v-model="email" class="login-value" />
-            <input type="text" placeholder="Password" v-model="password" class="login-value" />
+            <input type="password" placeholder="Password" v-model="password" class="login-value" />
+            <p v-if="error" class="error-mes">{{ error }}</p>
             <div class="action-login-resset">
               <button class="resset-password">Password Reset</button>
               <button class="action-login" @click="actionLogin()" @keyup.enter="actionLogin()">Login</button>
@@ -43,46 +44,84 @@
 </template>
 
 <script>
-import request from '../../request/request'
+// import request from '../../request/request'
+import axios from 'axios'
 export default {
   name: 'Login',
   data () {
     return {
       loading: false,
-      login: {
-        email: '1234',
-        password: '1234'
-      },
+      error: '',
       email: '',
       password: ''
     }
   },
 
+  created () {
+    localStorage.setItem('user', null)
+  },
+
   methods: {
+    loginFacebook () {
+      let self = this
+      FB.login(function (response) {
+        if (response.authResponse) {
+          FB.api('/me', function (user) {
+            let data = {
+              fb_access_token: response.authResponse.accessToken
+            }
+            axios.post('http://34.87.111.216:8000/auth/login_fb/', data)
+              .then((response) => {
+                localStorage.setItem('user', JSON.stringify(response))
+                self.$router.push({ path: '/home' })
+              })
+              .catch((e) => {
+                if (e.response.status === '401') {
+                  self.$router.push({ path: '/' })
+                }
+              })
+          })
+        } else {
+          console.log('User cancelled login or did not fully authorize.')
+        }
+      })
+    },
+
     showPopup () {
       this.$modal.show('create-new-account')
     },
 
     actionLogin () {
+      if (!this.email || !this.password) return
+
       const data = {
         email: this.email,
         password: this.password
       }
 
-      if (this.login.email !== this.email || this.login.password !== this.password) {
-        return
-      }
+      // request({
+      //   url: '/auth/login_email/',
+      //   method: 'post',
+      //   body: JSON.stringify(data)
+      // }).then(res => {
+      //   localStorage.setItem('user', {user: res})
+      // })
+      // this.$router.push({ path: '/home' })
 
-      console.log('data', data)
-      request({
-        url: '/',
-        method: 'get',
-        body: JSON.stringify(data)
-      }).then(res => {
-        let user = JSON.stringify({token: '123'})
-        localStorage.setItem('user', user)
-      })
-      this.$router.push({ path: '/home' })
+      axios.post('http://34.87.111.216:8000/auth/login_email/', data)
+        .then((response) => {
+          localStorage.setItem('user', JSON.stringify(response))
+          this.$router.push({ path: '/home' })
+        })
+        .catch((e) => {
+          if (e.response) {
+            this.error = 'Enter a valid email address and password.'
+          }
+
+          if (e.response.status === '401') {
+            this.$router.push({ path: '/' })
+          }
+        })
     }
   }
 }
@@ -182,6 +221,10 @@ export default {
   color: white;
   font-weight: bold;
   outline: none;
+}
+
+.error-mes {
+  color: red;
 }
 
 @media only screen and (max-width: 600px) {
