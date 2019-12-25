@@ -62,7 +62,7 @@ class LoginFacebookAPI(GenericViewSet):
             return Response('Incorrect facebook id', status=status.HTTP_401_UNAUTHORIZED)
         user, created = User.objects.get_or_create(
             facebook_id=fb_id,
-            default={'username': user_name}
+            defaults={'username': user_name}
         )
         jwt_token = create_token(user.id, user.username)
         data = {
