@@ -38,7 +38,7 @@
 
 <script>
 import Header from '../header/header'
-import request from '../../../request/request'
+// import request from '../../../request/request'
 import Question from './Question'
 import { QUESTIONS, OPTIONS } from '../Constant'
 
@@ -59,11 +59,11 @@ export default {
   },
 
   created () {
-    request({
-      url: '/',
-      method: 'get'
-    }).then(res => {
-    })
+    // request({
+    //   url: '/',
+    //   method: 'get'
+    // }).then(res => {
+    // })
   },
 
   methods: {}
