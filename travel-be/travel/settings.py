@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.users',
     'apps.category',
+    'apps.questions',
+    'apps.answers',
 ]
 
 MIDDLEWARE = [

@@ -26,4 +26,6 @@ urlpatterns = [
     path('auth/login_email/', LoginEmailAPI.as_view({'post': 'post'})),
     path('auth/login_fb/', LoginFacebookAPI.as_view({'post': 'post'})),
     path('category/', include('apps.category.urls')),
+    path('questions/', include('apps.questions.urls')),
+    path('answers/', include('apps.answers.urls')),
 ]
