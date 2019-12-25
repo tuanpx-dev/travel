@@ -57,7 +57,11 @@ export default {
   },
 
   created () {
-    localStorage.setItem('user', null)
+    if (localStorage.getItem('user')) {
+      this.$router.push({ path: '/' })
+    } else {
+      localStorage.setItem('user', null)
+    }
   },
 
   methods: {
