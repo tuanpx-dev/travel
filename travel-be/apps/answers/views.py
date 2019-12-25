@@ -7,6 +7,7 @@ from .serializers import AnswerSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
 from travel.errors.common import ErrorResponse
+from travel.pagination.core import DEFAULT_LIMIT, DEFAULT_OFFSET, Paginator
 
 
 # Create your views here.
@@ -20,6 +21,19 @@ class AnswerModelViewSet(ModelViewSet):
         if self.request.method == 'GET':
             self.authentication_classes = []
         return [auth() for auth in self.authentication_classes]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('-created_at')[offset:offset+limit]
+        serializers = AnswerSerializer(self.queryset, many=True)
+        page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
