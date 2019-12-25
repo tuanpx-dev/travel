@@ -9,6 +9,7 @@ from apps.answers.serializers import AnswerSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
 from travel.errors.common import ErrorResponse
+from travel.pagination.core import DEFAULT_LIMIT, DEFAULT_OFFSET, Paginator
 
 
 # Create your views here.
@@ -22,6 +23,19 @@ class QuestionModelViewSet(ModelViewSet):
         if self.request.method == 'GET':
             self.authentication_classes = []
         return [auth() for auth in self.authentication_classes]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('-created_at')[offset:offset+limit]
+        serializers = QuestionSerializer(self.queryset, many=True)
+        page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -44,8 +58,14 @@ class FetchAnswersViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         question_id = kwargs.get("question_id")
-        print(question_id)
-        limit = int(request.GET.get("limit", 20))
-        offset = int(request.GET.get("offset", 0))
-        self.queryset = self.queryset.filter(question__id=question_id).order_by('-created_at')[offset:offset + limit]
-        return Response(AnswerSerializer(self.queryset, many=True).data, status=status.HTTP_200_OK)
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+        self.queryset = self.queryset.filter(question__id=question_id)
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
+        serializers = AnswerSerializer(self.queryset, many=True)
+        page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
