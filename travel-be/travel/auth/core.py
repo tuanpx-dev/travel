@@ -1,6 +1,6 @@
 from rest_framework import exceptions
 from rest_framework.authentication import get_authorization_header, BaseAuthentication
-from travel.auth.token import decode_token
+from .token import decode_token
 
 
 class JwtAuthentication(BaseAuthentication):

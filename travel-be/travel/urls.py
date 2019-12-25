@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from rest_framework_swagger.views import get_swagger_view
 from apps.users.views import LoginEmailAPI, LoginFacebookAPI
 
@@ -25,4 +25,5 @@ urlpatterns = [
     path('api_docs/', schema_view),
     path('auth/login_email/', LoginEmailAPI.as_view({'post': 'post'})),
     path('auth/login_fb/', LoginFacebookAPI.as_view({'post': 'post'})),
+    path('category/', include('apps.category.urls')),
 ]
