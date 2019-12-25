@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -133,16 +133,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
-def __get_log_level():
-    if IS_TESTING:
-        return 'ERROR'
-    if IS_PRODUCTION:
-        return 'INFO'
-    else:
-        return 'DEBUG'
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -153,7 +143,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': __get_log_level(),
+            'level': 'DEBUG',
             'filters': [],
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
