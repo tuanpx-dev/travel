@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AnswerModelViewSet, FetchCommentsViewSet
+from .views import AnswerModelViewSet, FetchCommentsViewSet, LikeAnswerViewSet
 
 snippet_list = {
     'get': 'list',
@@ -16,4 +16,5 @@ urlpatterns = [
     path('', AnswerModelViewSet.as_view(snippet_list)),
     path('<int:pk>/', AnswerModelViewSet.as_view(snippet_detail)),
     path('<int:answer_id>/comments/', FetchCommentsViewSet.as_view({'get': 'list'})),
+    path('likes/', LikeAnswerViewSet.as_view({'post': 'create'}))
 ]

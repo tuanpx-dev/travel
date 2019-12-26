@@ -1,10 +1,10 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Question
+from .models import Question, QuestionLikes
 from apps.answers.models import Answer
 from apps.category.models import Category
-from .serializers import QuestionSerializer
+from .serializers import QuestionSerializer, LikeQuestionSerializer
 from apps.answers.serializers import AnswerSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
@@ -69,3 +69,32 @@ class FetchAnswersViewSet(ModelViewSet):
         serializers = AnswerSerializer(self.queryset, many=True)
         page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)
+
+
+class LikeQuestionViewSet(ModelViewSet):
+    queryset = QuestionLikes.objects.all()
+    serializer_class = LikeQuestionSerializer
+    authentication_classes = [JwtAuthentication, ]
+    permission_classes = [IsOwnerOrReadOnly, ]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        validated_data = serializer.validated_data
+        question_id = validated_data.pop('question_id')
+        try:
+            question = Question.objects.get(id=question_id)
+        except Question.DoesNotExist:
+            return ErrorResponse(message="Question does not exist")
+
+        try:
+            # if like this question then dislike
+            like_question = QuestionLikes.objects.get(user=request.token.user, question=question)
+            like_question.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except QuestionLikes.DoesNotExist:
+            # if not like this question then like
+            QuestionLikes.objects.create(user=request.token.user, question=question)
+            return Response(status=status.HTTP_201_CREATED)
