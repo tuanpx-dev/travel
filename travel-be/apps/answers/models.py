@@ -12,3 +12,13 @@ class Answer(models.Model):
 
     class Meta:
         db_table = 'answer'
+
+
+class AnswerLikes(models.Model):
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'answer_likes'

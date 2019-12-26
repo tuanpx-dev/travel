@@ -29,3 +29,7 @@ class LazyQuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = ['id', 'title', 'body', 'category', 'created_at', 'updated_at']
         read_only_fields = ['id', 'title', 'body', 'category', 'created_at', 'updated_at']
+
+
+class LikeQuestionSerializer(serializers.Serializer):
+    question_id = serializers.IntegerField(required=True)
