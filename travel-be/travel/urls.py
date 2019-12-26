@@ -28,4 +28,5 @@ urlpatterns = [
     path('category/', include('apps.category.urls')),
     path('questions/', include('apps.questions.urls')),
     path('answers/', include('apps.answers.urls')),
+    path('comments/', include('apps.comments.urls')),
 ]

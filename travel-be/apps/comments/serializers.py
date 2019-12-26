@@ -1,18 +1,18 @@
 from rest_framework import serializers
 from apps.users.serializers import UserSerializer
-from apps.answers.models import Answer
+from apps.comments.models import Comment
 
 
-class AnswerSerializer(serializers.ModelSerializer):
-    question_id = serializers.IntegerField()
+class CommentSerializer(serializers.ModelSerializer):
+    answer_id = serializers.IntegerField()
 
     class Meta:
-        model = Answer
-        fields = ['id', 'body', 'question_id', 'created_at', 'updated_at']
+        model = Comment
+        fields = ['id', 'body', 'answer_id', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def to_representation(self, instance):
-        ret = super(AnswerSerializer, self).to_representation(instance)
+        ret = super(CommentSerializer, self).to_representation(instance)
         ret['user'] = UserSerializer(instance.user).data
         return ret
 
@@ -22,8 +22,8 @@ class AnswerSerializer(serializers.ModelSerializer):
         return instance
 
 
-class LazyAnswerSerializer(serializers.ModelSerializer):
+class LazyCommetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Answer
+        model = Comment
         fields = ['id', 'body', 'created_at', 'updated_at']
         read_only_fields = ['id', 'body', 'created_at', 'updated_at']
