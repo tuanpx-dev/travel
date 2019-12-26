@@ -3,7 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from apps.questions.models import Question
 from .models import Answer
+from apps.comments.models import Comment
 from .serializers import AnswerSerializer
+from apps.comments.serializers import CommentSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
 from travel.errors.common import ErrorResponse
@@ -48,3 +50,22 @@ class AnswerModelViewSet(ModelViewSet):
             return ErrorResponse(message="Question does not exist")
         answer = Answer.objects.create(user=request.token.user, question=question, **validated_data)
         return Response(AnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
+
+
+class FetchCommentsViewSet(ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def list(self, request, *args, **kwargs):
+        answer_id = kwargs.get("answer_id")
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+        self.queryset = self.queryset.filter(answer__id=answer_id)
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('created_at')[offset:offset + limit]
+        serializers = CommentSerializer(self.queryset, many=True)
+        page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
