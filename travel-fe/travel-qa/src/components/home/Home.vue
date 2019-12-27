@@ -33,40 +33,91 @@
 
       <div class="col-md-3"></div>
     </div>
+
+    <paginate
+      :page-count="totalPage"
+      :click-handler="handlePage"
+      :prev-text="'Prev'"
+      :next-text="'Next'">
+    </paginate>
   </div>
 </template>
 
 <script>
+import { EventBus } from '../../eventBus'
 import Header from '../header/header'
-// import request from '../../../request/request'
+import request from '../../../request/request'
 import Question from './Question'
-import { QUESTIONS, OPTIONS } from '../Constant'
+import { URL } from '../../api/URL'
+import Paginate from 'vuejs-paginate'
 
 export default {
   name: 'Home',
 
   components: {
     Question,
-    Header
+    Header,
+    Paginate
   },
 
   data () {
     return {
+      totalPage: 0,
       loading: false,
-      questions: QUESTIONS,
-      options: OPTIONS
+      questions: [],
+      options: []
     }
   },
 
   created () {
-    // request({
-    //   url: '/',
-    //   method: 'get'
-    // }).then(res => {
-    // })
+    this.getQuestion()
+    this.getCategory()
   },
 
-  methods: {}
+  updated () {
+    EventBus.$on('closeFormCreateASK', () => {
+      this.getQuestion()
+    })
+  },
+
+  methods: {
+    getQuestion () {
+      request({
+        url: URL.QUESTIONS,
+        method: 'get'
+      })
+        .then(res => {
+          this.questions = res.data.content
+          this.totalPage = this.questions.length / res.data.limit
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    getCategory () {
+      request({
+        url: URL.CATEGORY,
+        method: 'get'
+      })
+        .then(res => {
+          this.options = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    handlePage () {
+
+    }
+  }
 }
 </script>
 

@@ -8,49 +8,128 @@
 
     <div class="question-content col-md-12">
       <div class="question-user">
-        <img :src="question.user.img" alt="">
+        <img v-if='question.user.img' :src="question.user.img" alt="">
+        <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
         <p class="question-title">{{question.title}}</p>
       </div>
-      <p class="question-des">Question details <br/>{{question.des}}</p>
+      <p class="question-des">Question details <br/>{{question.body}}</p>
       <div class="question-review">
-        <p v-if="question.like"><i class="fa fa-heart" ></i> {{question.like}}</p>&nbsp; &nbsp;
-        <p v-if="question.comments.length > 0"><i class="fa fa-comment" @click="showComment = !showComment"></i> {{question.comments.length}}</p>
+        <p><i class="fa fa-heart" @click="likeQuestion"></i> {{ like }}</p>&nbsp; &nbsp;
+        <p v-if="comments.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ comments.length }}</p>
       </div>
 
-      <div class="question-comment" v-if="showComment" v-for="comment in question.comments" :key="comment.id">
-        <div class="question-user">
-          <img :src="question.user.img" alt="">
-        </div>
-        <div class="question-answer">
-          <div class="comment-user">
-            <p>{{comment.user.name}}</p> <p>{{comment.time}}</p>
+      <div v-if="question.total_answers > 0 && !hideComment">
+        <div class="question-comment" v-for="comment in comments" :key="comment.id">
+          <div class="question-user">
+            <img v-if="comment.user.img" :src="comment.user.img" alt="">
+            <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
           </div>
-          <p>{{ comment.des }}</p>
+          <div class="question-answer">
+            <div class="comment-user">
+              <p>{{comment.user.username}}</p> <p>{{comment.created_at | moment('DD/MM')}}</p>
+            </div>
+            <p>{{ comment.body }}</p>
+          </div>
         </div>
       </div>
 
       <div class="question-add-comment">
-        <input type="text" placeholder="Answer this question">
+        <input type="text" placeholder="Answer this question" v-model="answres" @keyup.enter="addAnswer">
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { URL } from '../../api/URL'
+import request from '../../../request/request'
 export default {
   name: 'Question',
   props: [ 'question', 'page' ],
   data () {
     return {
       loading: false,
-      showComment: false
+      hideComment: true,
+      comments: [],
+      like: 0,
+      answres: ''
     }
   },
 
   created () {
+    this.getListComment()
   },
 
   methods: {
+    showComment () {
+      this.hideComment = !this.hideComment
+    },
+
+    getListComment () {
+      request({
+        url: URL.ANSWERS_QUESTION(this.question.id),
+        method: 'get'
+      })
+        .then(res => {
+          // this.hideComment = false
+          this.comments = res.data.content
+        })
+        .catch((e) => {
+          if (e.response.status === '401') {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    addAnswer () {
+      if (!this.answres) return
+
+      const data = {
+        body: this.answres,
+        question_id: this.question.id
+      }
+
+      request({
+        url: URL.ANSWERS,
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.answres = ''
+          this.hideComment = false
+          this.getListComment()
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    likeQuestion () {
+      const data = {
+        question_id: this.question.id
+      }
+
+      request({
+        url: URL.LIKE_QUESTION,
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.answres = ''
+          this.hideComment = false
+          this.getListComment()
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    }
   }
 }
 </script>

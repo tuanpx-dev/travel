@@ -9,10 +9,15 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VModal from 'vue-js-modal'
+import Paginate from 'vuejs-paginate'
 
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
-Vue.use(VModal)
+Vue.use(VModal, {
+  dynamic: true
+})
+Vue.use(require('vue-moment'))
+Vue.use(Paginate)
 
 Vue.config.productionTip = false
 

@@ -140,7 +140,7 @@ export default {
   height: 100vh;
   padding: 4% 8%;
   display: flex;
-    align-items: center;
+  align-items: center;
 }
 
 .login {
