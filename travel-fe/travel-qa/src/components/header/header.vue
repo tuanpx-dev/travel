@@ -71,14 +71,11 @@ export default {
     },
 
     addAsk () {
-      this.titleQuestion = ''
-      this.detailQuestion = ''
-
       this.$modal.show('create-new-ask')
     },
 
     createASK () {
-      if (!this.titleQuestio || !this.detailQuestion) return
+      if (!this.titleQuestion || !this.detailQuestion) return
 
       const data = {
         title: this.titleQuestion,
@@ -94,6 +91,8 @@ export default {
         .then(res => {
           this.$modal.hide('create-new-ask')
           EventBus.$emit('closeFormCreateASK')
+          this.titleQuestion = ''
+          this.detailQuestion = ''
         })
         .catch((e) => {
           if (e.response.status === 401) {
