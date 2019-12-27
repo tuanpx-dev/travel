@@ -5,10 +5,13 @@ export const URL = {
 
   // question
   QUESTIONS: '/questions/',
-  LIKE_QUESTION: `/questions/like/`,
+  LIKE_QUESTION: `/questions/likes/`,
   ANSWERS_QUESTION: (id) => `/questions/${id}/answers/`,
   DETAIL_QUESTION: (id) => `/questions/${id}/`,
 
   // category
-  CATEGORY: '/category/'
+  CATEGORY: '/category/',
+
+  // answers
+  ANSWERS: '/answers/'
 }

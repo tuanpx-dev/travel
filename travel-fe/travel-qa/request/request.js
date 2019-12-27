@@ -1,5 +1,4 @@
 import axios from 'axios'
-let user = JSON.parse(localStorage.getItem('user'))
 
 // create an axios instance
 const service = axios.create({
@@ -13,9 +12,10 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    config.headers['Authorization'] = 'Bearer '
-    if (user) {
-      config.headers['Authorization'] = 'Bearer ' + user.data.access_token
+    let token = JSON.parse(localStorage.getItem('user'))
+
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token.data.access_token}`
     }
 
     return config

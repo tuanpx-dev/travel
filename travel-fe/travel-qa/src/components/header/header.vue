@@ -9,7 +9,12 @@
     <div class="col-md-6"></div>
     <div class="col-md-3"></div>
 
-    <modal name="create-new-ask" width="60%" height="600px">
+    <modal
+      name="create-new-ask"
+      width="60%"
+      height="500px"
+      :scrollable="false"
+      :clickToClose="false">
       <h3 class="title-popup-ask">AskQuestion</h3>
 
       <div class="popup-note">
@@ -22,7 +27,7 @@
       <div class="ask-title">
         <div class="ask-user">
           <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-          <p>name user has a question</p>
+          <p>{{ user.username }} has a question</p>
         </div>
         <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
       </div>
@@ -32,15 +37,16 @@
         </textarea>
       </div>
 
-      <div>
-        <button> Cancel</button>
-        <button @click="createASK"> Question </button>
+      <div class="action-ask">
+        <button class="action-cancel" @click="closeASK"> Cancel</button>
+        <button class="action-create" @click="createASK"> Question </button>
       </div>
     </modal>
   </div>
 </template>
 
 <script>
+import { EventBus } from '../../eventBus'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
 
@@ -50,20 +56,34 @@ export default {
   data () {
     return {
       titleQuestion: '',
-      detailQuestion: ''
+      detailQuestion: '',
+      user: {}
     }
   },
 
+  created () {
+    this.user = JSON.parse(localStorage.getItem('user')).data.user
+  },
+
   methods: {
+    closeASK () {
+      this.$modal.hide('create-new-ask')
+    },
+
     addAsk () {
+      this.titleQuestion = ''
+      this.detailQuestion = ''
+
       this.$modal.show('create-new-ask')
     },
 
     createASK () {
+      if (!this.titleQuestio || !this.detailQuestion) return
+
       const data = {
         title: this.titleQuestion,
         body: this.detailQuestion,
-        category_id: ''
+        category_id: 1
       }
 
       request({
@@ -72,8 +92,8 @@ export default {
         data: JSON.stringify(data)
       })
         .then(res => {
-          this.questions = res.data.content
-          this.totalPage = this.questions.length / res.data.limit
+          this.$modal.hide('create-new-ask')
+          EventBus.$emit('closeFormCreateASK')
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -123,10 +143,21 @@ export default {
   border-bottom: 1px solid #ccc;
 }
 
+.ask-user {
+  display: flex;
+}
+
+.ask-user p{
+  padding-top: 10px;
+  font-size: 18px;
+  color: #6c757d;
+}
+
 .ask-user img{
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  margin-right: 20px;
 }
 
 .popup-note {
@@ -153,6 +184,53 @@ export default {
 }
 
 .ask-title input::placeholder {
-  color: red;
+  color: #bcb7b7;
+  font-size: 20px;
+  font-weight: 700;
 }
+
+.ask-deatail{
+  width: 100%;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #ccc;
+}
+
+.ask-deatail textarea{
+  padding: 20px;
+  width: 100%;
+  border: none;
+  outline: none;
+}
+
+.ask-deatail textarea::placeholder {
+  color: #bcb7b7;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.action-ask {
+  float: right;
+  margin-right: 20px;
+  padding-top: 10px;
+}
+
+.action-ask .action-cancel{
+  border: none;
+  background: none;
+  margin-right: 20px;
+  color: #6c757d;
+  outline: none;
+}
+
+.action-ask .action-create{
+  background-color: #708FDB;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: white;
+  padding: 5px 10px;
+  font-weight: 700;
+  outline: none;
+}
+
 </style>

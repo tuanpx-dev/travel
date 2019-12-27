@@ -44,10 +44,10 @@
 </template>
 
 <script>
+import { EventBus } from '../../eventBus'
 import Header from '../header/header'
 import request from '../../../request/request'
 import Question from './Question'
-import { OPTIONS } from '../Constant'
 import { URL } from '../../api/URL'
 import Paginate from 'vuejs-paginate'
 
@@ -65,28 +65,55 @@ export default {
       totalPage: 0,
       loading: false,
       questions: [],
-      options: OPTIONS
+      options: []
     }
   },
 
   created () {
-    request({
-      url: URL.QUESTIONS,
-      method: 'get'
+    this.getQuestion()
+    this.getCategory()
+  },
+
+  updated () {
+    EventBus.$on('closeFormCreateASK', () => {
+      this.getQuestion()
     })
-      .then(res => {
-        this.questions = res.data.content
-        this.totalPage = this.questions.length / res.data.limit
-      })
-      .catch((e) => {
-        if (e.response.status === '401') {
-          localStorage.setItem('user', null)
-          this.$router.push({ path: '/login' })
-        }
-      })
   },
 
   methods: {
+    getQuestion () {
+      request({
+        url: URL.QUESTIONS,
+        method: 'get'
+      })
+        .then(res => {
+          this.questions = res.data.content
+          this.totalPage = this.questions.length / res.data.limit
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    getCategory () {
+      request({
+        url: URL.CATEGORY,
+        method: 'get'
+      })
+        .then(res => {
+          this.options = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
     handlePage () {
 
     }

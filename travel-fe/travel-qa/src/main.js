@@ -13,7 +13,9 @@ import Paginate from 'vuejs-paginate'
 
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
-Vue.use(VModal)
+Vue.use(VModal, {
+  dynamic: true
+})
 Vue.use(require('vue-moment'))
 Vue.use(Paginate)
 
