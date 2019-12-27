@@ -34,13 +34,16 @@
 
       <div>
         <button> Cancel</button>
-        <button> Question </button>
+        <button @click="createASK"> Question </button>
       </div>
     </modal>
   </div>
 </template>
 
 <script>
+import request from '../../../request/request'
+import { URL } from '../../api/URL'
+
 export default {
   name: 'Header',
 
@@ -54,6 +57,30 @@ export default {
   methods: {
     addAsk () {
       this.$modal.show('create-new-ask')
+    },
+
+    createASK () {
+      const data = {
+        title: this.titleQuestion,
+        body: this.detailQuestion,
+        category_id: ''
+      }
+
+      request({
+        url: URL.QUESTIONS,
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.questions = res.data.content
+          this.totalPage = this.questions.length / res.data.limit
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
     }
   }
 }

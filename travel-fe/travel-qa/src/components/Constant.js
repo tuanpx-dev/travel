@@ -1,8 +1,3 @@
-export const LOGIN = {
-  email: '1234',
-  password: '1234'
-}
-
 export const QUESTIONS = [
   {
     user: {

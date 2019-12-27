@@ -1,5 +1,6 @@
 import axios from 'axios'
 let user = JSON.parse(localStorage.getItem('user'))
+
 // create an axios instance
 const service = axios.create({
   baseURL: 'http://34.87.111.216:8000',
@@ -8,6 +9,7 @@ const service = axios.create({
     'Content-Type': 'application/json'
   }
 })
+
 // request interceptor
 service.interceptors.request.use(
   config => {
