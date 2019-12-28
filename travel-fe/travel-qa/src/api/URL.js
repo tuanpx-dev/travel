@@ -4,10 +4,12 @@ export const URL = {
   LOGIN_FACEBOOK: '/auth/login_fb/',
 
   // question
-  QUESTIONS: '/questions/',
+  QUESTIONS: (offset) => `/questions/?offset=${offset}`,
+  CREATE_QUESTION: `/questions/`,
   LIKE_QUESTION: `/questions/likes/`,
   ANSWERS_QUESTION: (id) => `/questions/${id}/answers/`,
   DETAIL_QUESTION: (id) => `/questions/${id}/`,
+  DELETE_QUESTION: (id) => `/questions/${id}/`,
 
   // category
   CATEGORY: '/category/',

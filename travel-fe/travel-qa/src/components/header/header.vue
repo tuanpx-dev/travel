@@ -7,54 +7,31 @@
       </div>
     </div>
     <div class="col-md-6"></div>
-    <div class="col-md-3"></div>
+    <div class="col-md-3 user">
+      <img v-if='user.img' :src="user.img" alt="" class="avatar-user">
+      <img v-else class="avatar-user" src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+      <!-- <i class="fa fa-bell"></i> -->
+    </div>
 
-    <modal
-      name="create-new-ask"
-      width="60%"
-      height="500px"
-      :scrollable="false"
-      :clickToClose="false">
-      <h3 class="title-popup-ask">AskQuestion</h3>
-
-      <div class="popup-note">
-        <p>Tips for getting answers</p>
-        <p>1</p>
-        <p>2</p>
-        <p>3</p>
-      </div>
-
-      <div class="ask-title">
-        <div class="ask-user">
-          <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-          <p>{{ user.username }} has a question</p>
-        </div>
-        <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
-      </div>
-
-      <div class="ask-deatail">
-        <textarea placeholder="Enter your question details here" rows="4" cols="50" v-model="detailQuestion">
-        </textarea>
-      </div>
-
-      <div class="action-ask">
-        <button class="action-cancel" @click="closeASK"> Cancel</button>
-        <button class="action-create" @click="createASK"> Question </button>
-      </div>
-    </modal>
+    <Ask
+      :name="namePopup"
+      @closeASK="closeASK"
+    />
   </div>
 </template>
 
 <script>
-import { EventBus } from '../../eventBus'
-import request from '../../../request/request'
-import { URL } from '../../api/URL'
+import Ask from '../ask/ask'
 
 export default {
   name: 'Header',
+  components: {
+    Ask
+  },
 
   data () {
     return {
+      namePopup: 'create-ask',
       titleQuestion: '',
       detailQuestion: '',
       user: {}
@@ -67,39 +44,11 @@ export default {
 
   methods: {
     closeASK () {
-      this.$modal.hide('create-new-ask')
+      this.$modal.hide(this.namePopup)
     },
 
     addAsk () {
-      this.$modal.show('create-new-ask')
-    },
-
-    createASK () {
-      if (!this.titleQuestion || !this.detailQuestion) return
-
-      const data = {
-        title: this.titleQuestion,
-        body: this.detailQuestion,
-        category_id: 1
-      }
-
-      request({
-        url: URL.QUESTIONS,
-        method: 'post',
-        data: JSON.stringify(data)
-      })
-        .then(res => {
-          this.$modal.hide('create-new-ask')
-          EventBus.$emit('closeFormCreateASK')
-          this.titleQuestion = ''
-          this.detailQuestion = ''
-        })
-        .catch((e) => {
-          if (e.response.status === 401) {
-            localStorage.setItem('user', null)
-            this.$router.push({ path: '/login' })
-          }
-        })
+      this.$modal.show(this.namePopup)
     }
   }
 }
@@ -134,6 +83,16 @@ export default {
   font-weight: 800;
   outline: none;
   margin-top: 15px;
+}
+/* user */
+.user {
+}
+
+.avatar-user {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  float: right;
 }
 
 /* add ask */
