@@ -24,22 +24,32 @@
           <div class="home-menu">
             <button class="home-menu-page">Popular</button>
             <button class="home-menu-page new">New</button>
+            <button class="home-menu-page new">Relation</button>
           </div>
-          <div class="home-list" v-for="question in questions" :key="question.id">
+          <div v-if="!loading">
+            <div class="home-list" v-for="question in questions" :key="question.id">
             <Question :question="question" :page="'home'"/>
           </div>
+          </div>
+
+          <div v-else>
+            <b-spinner class="m-5"></b-spinner>
+          </div>
+
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalPage"
+            :hide-goto-end-buttons="true"
+            per-page="limit"
+            prev-text="Prev"
+            next-text="Next"
+            @change="handlePage"
+          ></b-pagination>
         </div>
       </div>
 
       <div class="col-md-3"></div>
     </div>
-
-    <paginate
-      :page-count="totalPage"
-      :click-handler="handlePage"
-      :prev-text="'Prev'"
-      :next-text="'Next'">
-    </paginate>
   </div>
 </template>
 
@@ -62,33 +72,38 @@ export default {
 
   data () {
     return {
+      currentPage: 1,
       totalPage: 0,
-      loading: false,
+      limit: 0,
+      loading: true,
       questions: [],
       options: []
     }
   },
 
   created () {
-    this.getQuestion()
+    this.getQuestion(0)
     this.getCategory()
   },
 
   updated () {
     EventBus.$on('closeFormCreateASK', () => {
-      this.getQuestion()
+      this.getQuestion(0)
     })
   },
 
   methods: {
-    getQuestion () {
+    getQuestion (offset) {
+      this.loading = true
       request({
-        url: URL.QUESTIONS,
+        url: URL.QUESTIONS(offset),
         method: 'get'
       })
         .then(res => {
+          this.loading = false
           this.questions = res.data.content
-          this.totalPage = this.questions.length / res.data.limit
+          this.totalPage = res.data.total_length
+          this.limit = res.data.limit
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -114,8 +129,9 @@ export default {
         })
     },
 
-    handlePage () {
-
+    handlePage (pageNumber) {
+      const offset = (pageNumber - 1) * this.limit
+      this.getQuestion(offset)
     }
   }
 }
@@ -183,5 +199,10 @@ export default {
   padding: 5px 15px;
   color: black;
   background-color: white;
+}
+
+/* panigation */
+.b-pagination {
+  float: right;
 }
 </style>
