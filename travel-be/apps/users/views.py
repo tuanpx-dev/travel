@@ -1,15 +1,19 @@
+import os
 import logging
 
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework import mixins
+from django.conf import settings
 
 from apps.users import serializers as user_sers
 from apps.users.models import User
 from apps.users.utils import get_facebook_profile
 from travel.auth.token import create_token, decode_token
+from travel.auth.core import JwtAuthentication
+from travel.errors.common import ErrorResponse
 
 _logger = logging.getLogger(__name__)
 
@@ -74,8 +78,59 @@ class LoginFacebookAPI(GenericViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# TODO create API
-class GetProfile(APIView):
+class ProfileModelViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = user_sers.ProfileSerializer
+    authentication_classes = [JwtAuthentication, ]
 
-    def get(self):
-        pass
+    def retrieve(self, request, *args, **kwargs):
+        user = request.token.user
+        serializer = user_sers.ProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def _remove_old_avatar(self, old_url):
+        try:
+            old_avatar_path = os.path.join(settings.BASE_DIR, old_url)
+            os.remove(old_avatar_path)
+        except Exception as e:
+            _logger.error(e.__str__())
+
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.token.user
+        old_avatar_url = user.avatar.path
+
+        validated_data = serializer.validated_data
+        user.display_name = validated_data.get('display_name', user.display_name)
+        user.email = validated_data.get('email', user.email)
+        user.age = validated_data.get('age', user.age)
+        user.avatar = validated_data.get('avatar', user.avatar)
+        user.save()
+
+        if old_avatar_url and old_avatar_url != '':
+            self._remove_old_avatar(old_avatar_url)
+
+        result = user_sers.ProfileSerializer(user)
+        return Response(result.data, status=status.HTTP_200_OK)
+
+
+class ChangePasswordViewSet(mixins.UpdateModelMixin, GenericViewSet):
+    serializer_class = user_sers.RequestChangePassword
+    authentication_classes = [JwtAuthentication, ]
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.token.user
+        validated_data = serializer.validated_data
+        old_password = validated_data.get('old_password')
+        new_password = validated_data.get('new_password')
+        if not user.check_password(old_password):
+            return ErrorResponse(message="Old password is incorrect")
+        user.set_password(new_password)
+        user.save()
+        return Response(status=status.HTTP_200_OK)

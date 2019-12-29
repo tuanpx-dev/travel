@@ -5,7 +5,7 @@ from apps.answers.models import Answer
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    category_id = serializers.IntegerField()
+    category_id = serializers.IntegerField(required=False)
     class Meta:
         model = Question
         fields = ['id', 'title', 'body', 'category_id', 'created_at', 'updated_at']
