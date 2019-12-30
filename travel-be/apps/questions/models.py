@@ -8,6 +8,7 @@ class Question(models.Model):
     title = models.CharField(blank=True, null=True, max_length=256)
     body = models.TextField(blank=True, null=True)
     category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
+    total_likes = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

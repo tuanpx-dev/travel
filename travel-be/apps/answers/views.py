@@ -1,10 +1,12 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import mixins
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from rest_framework.response import Response
 from apps.questions.models import Question
 from .models import Answer, AnswerLikes
 from apps.comments.models import Comment
 from .serializers import AnswerSerializer, LikeAnswerSerializer
+from .dto import UserAnswer, UserAnswers
 from apps.comments.serializers import CommentSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
@@ -93,8 +95,36 @@ class LikeAnswerViewSet(ModelViewSet):
             # if like this answer then dislike
             like_answer = AnswerLikes.objects.get(user=request.token.user, answer=answer)
             like_answer.delete()
+            answer.total_likes -= 1
+            answer.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except AnswerLikes.DoesNotExist:
             # if not like this answer then like
             AnswerLikes.objects.create(user=request.token.user, answer=answer)
+            answer.total_likes += 1
+            answer.save()
             return Response(status=status.HTTP_201_CREATED)
+
+
+class UserAnswersViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
+    queryset = Answer.objects.all()
+    authentication_classes = [JwtAuthentication, ]
+
+    def retrieve(self, request, *args, **kwargs):
+        answer = self.get_object()
+        user_answer = UserAnswer(request.token.user, answer)
+        return Response(user_answer.data(), status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('-created_at')[offset:offset+limit]
+        data = UserAnswers(request.token.user, list(self.queryset)).data()
+
+        page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)

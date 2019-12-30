@@ -8,12 +8,11 @@ class QuestionSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(required=False)
     class Meta:
         model = Question
-        fields = ['id', 'title', 'body', 'category_id', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'body', 'category_id', 'total_likes', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'total_likes', 'created_at', 'updated_at']
         
     def to_representation(self, instance):
         ret = super(QuestionSerializer, self).to_representation(instance)
-        ret['total_likes'] = QuestionLikes.objects.filter(question=instance).count()
         ret['total_answers'] = Answer.objects.filter(question=instance).count()
         ret['user'] = UserSerializer(instance.user).data
         return ret
