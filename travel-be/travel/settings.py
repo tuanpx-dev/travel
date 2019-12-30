@@ -197,11 +197,6 @@ URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
-        'rest_framework.parsers.FormParser',
-        'rest_framework.parsers.MultiPartParser',
-    ),
 }
 
 SWAGGER_SETTINGS = {

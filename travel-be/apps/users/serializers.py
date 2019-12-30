@@ -18,13 +18,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = user_models.User
         fields = ('id', 'username', 'display_name', 'email', 'age',
-                  'place', 'created_at', 'updated_at')
+                  'place', 'avatar', 'created_at', 'updated_at')
 
     def to_representation(self, instance):
         ret = super(UserSerializer, self).to_representation(instance)
-        avatar_path = instance.avatar.url
-        if avatar_path and avatar_path != '':
-            print(settings.DOMAIN_SERVER)
+        if instance.avatar:
+            avatar_path = instance.avatar.url
             ret['avatar'] = urllib.parse.urljoin(settings.DOMAIN_SERVER, avatar_path)
         return ret
 
@@ -44,9 +43,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super(ProfileSerializer, self).to_representation(instance)
-        avatar_path = instance.avatar.url
-        if avatar_path and avatar_path != '':
-            print(settings.DOMAIN_SERVER)
+        if instance.avatar:
+            avatar_path = instance.avatar.url
             ret['avatar'] = urllib.parse.urljoin(settings.DOMAIN_SERVER, avatar_path)
         return ret
 
