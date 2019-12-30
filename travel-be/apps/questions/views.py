@@ -43,11 +43,13 @@ class QuestionModelViewSet(ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         validated_data = serializer.validated_data
-        category_id = validated_data.pop('category_id')
+        category_id = validated_data.pop('category_id', None)
         try:
             category = Category.objects.get(id=category_id)
         except:
-            return ErrorResponse(message="Category does not exist")
+            question = Question.objects.create(user=request.token.user, **validated_data)
+            return Response(QuestionSerializer(question).data, status=status.HTTP_201_CREATED)
+
         question = Question.objects.create(user=request.token.user, category=category, **validated_data)
         return Response(QuestionSerializer(question).data, status=status.HTTP_201_CREATED)
 

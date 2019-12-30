@@ -131,11 +131,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -148,7 +143,11 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'filters': [],
-            'class': 'logging.StreamHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/backend.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 100,
             'formatter': 'verbose',
         },
         'sqllog': {
@@ -173,7 +172,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'wakpy': {
+        'apps': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
@@ -182,7 +181,6 @@ LOGGING = {
 }
 
 
-EXPIRED_TOKEN_TIME = 30
 # URL get profile on facebook
 URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
 
@@ -199,5 +197,13 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'in': 'header'
       }
-   }
+   },
 }
+
+# setting path media
+STATIC_URL = '/files/'
+MEDIA_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+
+# domain server
+DOMAIN_SERVER = 'http://34.87.111.216:8000/'

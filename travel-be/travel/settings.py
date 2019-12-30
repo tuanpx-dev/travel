@@ -131,11 +131,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'
-
 
 def __get_log_level():
     if IS_TESTING:
@@ -156,9 +151,13 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': __get_log_level(),
+            'level': 'DEBUG',
             'filters': [],
-            'class': 'logging.StreamHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/backend.log'),
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 100,
             'formatter': 'verbose',
         },
         'sqllog': {
@@ -183,7 +182,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'wakpy': {
+        'apps': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
@@ -191,15 +190,18 @@ LOGGING = {
     }
 }
 
-
-EXPIRED_TOKEN_TIME = 30
 # URL get profile on facebook
 URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
 
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': ()
+    'DEFAULT_AUTHENTICATION_CLASSES': (),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ),
 }
 
 SWAGGER_SETTINGS = {
@@ -211,3 +213,11 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+# setting path media
+STATIC_URL = '/files/'
+MEDIA_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+
+# domain server
+DOMAIN_SERVER = 'http://34.87.111.216:8000/'

@@ -7,7 +7,7 @@ class Question(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(blank=True, null=True, max_length=256)
     body = models.TextField(blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
