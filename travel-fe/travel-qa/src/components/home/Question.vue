@@ -19,16 +19,20 @@
 
     <div class="question-content col-md-12">
       <div class="question-user">
-        <p class="question-title">{{question.title}}</p>
+        <p class="question-title" @click="viewDetail">{{question.title}}</p>
       </div>
       <p class="question-des">Question details <br/>{{question.body}}</p>
+      <div class="poster">
+        <p class="img-poster">P</p>
+        <p>{{ question.user.username }} &nbsp; Poster: {{ question.created_at | moment('DD/MM') }}</p>
+      </div>
       <div class="question-review">
         <p><i class="fa fa-heart" @click="likeQuestion"></i> {{ like }}</p>&nbsp; &nbsp;
         <p v-if="comments.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ comments.length }}</p>
       </div>
 
       <div class="question-add-comment">
-        <input type="text" placeholder="Answer this question" v-model="answres" @keyup.enter="addAnswer">
+        <input type="text" placeholder="Answer this question" v-model="answres" @keyup.enter="addAnswer" :disabled="isSendAnswer">
       </div>
 
       <div v-if="question.total_answers > 0 && !hideComment">
@@ -74,7 +78,8 @@ export default {
       hideComment: true,
       comments: [],
       like: 0,
-      answres: ''
+      answres: '',
+      isSendAnswer: false
     }
   },
 
@@ -83,8 +88,16 @@ export default {
   },
 
   methods: {
+    viewDetail () {
+      this.$router.push({ path: '/detail-question', query: { id: this.question.id } })
+    },
+
     showComment () {
       this.hideComment = !this.hideComment
+
+      if (!this.hideComment) {
+        this.getListComment()
+      }
     },
 
     getListComment () {
@@ -93,8 +106,9 @@ export default {
         method: 'get'
       })
         .then(res => {
-          // this.hideComment = false
           this.comments = res.data.content
+          console.log(this.comments.length);
+          
         })
         .catch((e) => {
           if (e.response.status === '401') {
@@ -106,7 +120,7 @@ export default {
 
     addAnswer () {
       if (!this.answres) return
-
+      this.isSendAnswer = true
       const data = {
         body: this.answres,
         question_id: this.question.id
@@ -121,8 +135,10 @@ export default {
           this.answres = ''
           this.hideComment = false
           this.getListComment()
+          this.isSendAnswer = false
         })
         .catch((e) => {
+          this.isSendAnswer = false
           if (e.response.status === 401) {
             localStorage.setItem('user', null)
             this.$router.push({ path: '/login' })
@@ -258,6 +274,22 @@ export default {
   width: 100%;
   height: 40px;
   padding-left: 10px;
+}
+
+/* poster */
+.poster {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 14px;
+}
+
+.img-poster {
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  border-radius: 50%;
 }
 
 /* edit-create-question */

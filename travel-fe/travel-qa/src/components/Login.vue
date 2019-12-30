@@ -23,14 +23,23 @@
               <a href="">Privacy Policy</a>
             </div>
           </div>
-          <div class="login-form col-md-6 col-xs-12">
+          <div class="login-form col-md-6 col-xs-12" v-if="!resetPassWord">
             <p class="login-text">Login</p>
             <input type="text" placeholder="Email" v-model="email" class="login-value" />
             <input type="password" placeholder="Password" v-model="password" class="login-value" />
             <p v-if="error" class="error-mes">{{ error }}</p>
             <div class="action-login-resset">
-              <button class="resset-password">Password Reset</button>
+              <button class="resset-password" @click="resetPassWord = true">Password Reset</button>
               <button class="action-login" @click="actionLogin()" @keyup.enter="actionLogin()">Login</button>
+            </div>
+          </div>
+
+          <div class="login-form col-md-6 col-xs-12" v-else>
+            <p class="login-text">Password Reset</p>
+            <input type="text" placeholder="Email" v-model="emailReset" class="login-value" />
+            <p v-if="error" class="error-mes">{{ errorEmail }}</p>
+            <div class="action-login-resset">
+              <button class="action-login" @click="sendEmailResetPassWord()" @keyup.enter="actionLogin()">Reset</button>
             </div>
           </div>
         </div>
@@ -45,14 +54,20 @@
 
 <script>
 import request from '../../request/request'
+import { URL } from '../api/URL'
 export default {
   name: 'Login',
   data () {
     return {
       loading: false,
+      resetPassWord: false,
+      // login
       error: '',
       email: '',
-      password: ''
+      password: '',
+      // reset pass word
+      emailReset: '',
+      errorEmail: ''
     }
   },
 
@@ -127,6 +142,29 @@ export default {
 
           if (e.response.status === '401') {
             this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    sendEmailResetPassWord () {
+      if (!this.emailReset) return
+
+      const data = {
+        email: this.emailReset
+      }
+
+      request({
+        url: URL.RESET_PASSWORD,
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          localStorage.setItem('user', JSON.stringify(res))
+          this.$router.push({ path: '/' })
+        })
+        .catch((e) => {
+          if (e.response) {
+            this.error = 'Enter a valid email address'
           }
         })
     }

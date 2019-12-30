@@ -2,6 +2,7 @@ export const URL = {
   // login
   LOGIN_EMAIL: '/auth/login_email/',
   LOGIN_FACEBOOK: '/auth/login_fb/',
+  RESET_PASSWORD: '/auth/reset_password',
 
   // question
   QUESTIONS: (offset) => `/questions/?offset=${offset}`,
