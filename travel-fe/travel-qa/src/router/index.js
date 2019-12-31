@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '../components/home/Home'
 import ResetPassWord from '@/components/ResetPassWord'
-import DetailQuestion from '@/components/detailQuestion/DetailQuestion'
+import DetailQuestion from '../components/detailQuestion/DetailQuestion'
 
 Vue.use(Router)
 
