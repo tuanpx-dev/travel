@@ -28,14 +28,14 @@
       </div>
       <div class="question-review">
         <p><i class="fa fa-heart" @click="likeQuestion"></i> {{ like }}</p>&nbsp; &nbsp;
-        <p v-if="comments.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ comments.length }}</p>
+        <p v-if="question.total_answers > 0 || comments.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ hideComment ? question.total_answers : comments.length }}</p>
       </div>
 
       <div class="question-add-comment">
         <input type="text" placeholder="Answer this question" v-model="answres" @keyup.enter="addAnswer" :disabled="isSendAnswer">
       </div>
 
-      <div v-if="question.total_answers > 0 && !hideComment">
+      <div v-if="(question.total_answers > 0 || comments.length > 0) && !hideComment">
         <div class="question-comment" v-for="comment in comments" :key="comment.id">
           <div class="question-user">
             <img v-if="comment.user.img" :src="comment.user.img" alt="">
@@ -83,9 +83,9 @@ export default {
     }
   },
 
-  created () {
-    this.getListComment()
-  },
+  // created () {
+  //   this.getListComment()
+  // },
 
   methods: {
     viewDetail () {
@@ -93,11 +93,8 @@ export default {
     },
 
     showComment () {
+      this.getListComment()
       this.hideComment = !this.hideComment
-
-      if (!this.hideComment) {
-        this.getListComment()
-      }
     },
 
     getListComment () {
@@ -107,8 +104,6 @@ export default {
       })
         .then(res => {
           this.comments = res.data.content
-          console.log(this.comments.length);
-          
         })
         .catch((e) => {
           if (e.response.status === '401') {
@@ -249,6 +244,10 @@ export default {
 .question-title {
   font-size: 18px;
   font-weight: bold;
+}
+
+.question-title:hover {
+  cursor: pointer;
 }
 
 .question-des {

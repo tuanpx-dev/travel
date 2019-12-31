@@ -38,16 +38,6 @@
               </div>
             </div>
           </div>
-
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalPage"
-            :hide-goto-end-buttons="true"
-            per-page="limit"
-            prev-text="Prev"
-            next-text="Next"
-            @change="handlePage"
-          ></b-pagination>
         </div>
       </div>
 
@@ -61,7 +51,6 @@
 import Header from '../header/header'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
-import Paginate from 'vuejs-paginate'
 import Question from '../home/Question'
 
 export default {
@@ -69,15 +58,11 @@ export default {
 
   components: {
     Header,
-    Paginate,
     Question
   },
 
   data () {
     return {
-      currentPage: 1,
-      totalPage: 0,
-      limit: 0,
       loading: true,
       questionDetail: {},
       listAnswers: [],

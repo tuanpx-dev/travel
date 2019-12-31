@@ -2,8 +2,9 @@
     <modal
       :name="name"
       width="60%"
-      height="500px"
-      :scrollable="false"
+      maxHeight="600px"
+      :reset="true"
+      :scrollable="true"
       :clickToClose="false">
       <h3 class="title-popup-ask">AskQuestion</h3>
 
