@@ -9,12 +9,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['id', 'body', 'question_id', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ['id', 'body', 'question_id', 'total_likes', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'total_likes', 'created_at', 'updated_at']
 
     def to_representation(self, instance):
         ret = super(AnswerSerializer, self).to_representation(instance)
-        ret['total_likes'] = AnswerLikes.objects.filter(answer=instance).count()
         ret['total_commnets'] = Comment.objects.filter(answer=instance).count()
         ret['user'] = UserSerializer(instance.user).data
         return ret
