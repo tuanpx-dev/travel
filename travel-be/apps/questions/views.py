@@ -7,6 +7,7 @@ from apps.answers.models import Answer
 from apps.category.models import Category
 from .serializers import QuestionSerializer, LikeQuestionSerializer
 from .dto import UserQuestion, UserQuestions
+from apps.answers.dto import UserAnswers
 from apps.answers.serializers import AnswerSerializer
 from travel.auth.core import JwtAuthentication
 from travel.permissions.core import IsOwnerOrReadOnly
@@ -72,6 +73,26 @@ class FetchAnswersViewSet(ModelViewSet):
         self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
         serializers = AnswerSerializer(self.queryset, many=True)
         page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
+
+
+class FetchUserAnswersViewSet(ModelViewSet):
+    queryset = Answer.objects.all()
+    authentication_classes = [JwtAuthentication, ]
+
+    def list(self, request, *args, **kwargs):
+        question_id = kwargs.get("question_id")
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        self.queryset = self.queryset.filter(question__id=question_id)
+        total_length = self.queryset.count()
+        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
+        data = UserAnswers(request.token.user, list(self.queryset)).data()
+        page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)
 
 

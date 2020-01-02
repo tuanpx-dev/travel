@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import QuestionModelViewSet, FetchAnswersViewSet, LikeQuestionViewSet, UserQuestionsViewSet
+from .views import QuestionModelViewSet, FetchAnswersViewSet, LikeQuestionViewSet, UserQuestionsViewSet, \
+    FetchUserAnswersViewSet
 
 snippet_list = {
     'get': 'list',
@@ -19,4 +20,5 @@ urlpatterns = [
     path('likes/', LikeQuestionViewSet.as_view({'post': 'create'})),
     path('auth-required-questions/', UserQuestionsViewSet.as_view({'get': 'list'})),
     path('auth-required-questions/<int:pk>/', UserQuestionsViewSet.as_view({'get': 'retrieve'})),
+    path('auth-required-questions/<int:question_id>/answers/', FetchUserAnswersViewSet.as_view({'get': 'list'})),
 ]
