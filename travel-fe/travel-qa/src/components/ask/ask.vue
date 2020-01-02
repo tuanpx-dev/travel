@@ -2,8 +2,9 @@
     <modal
       :name="name"
       width="60%"
-      height="500px"
-      :scrollable="false"
+      height="auto"
+      :reset="true"
+      :scrollable="true"
       :clickToClose="false">
       <h3 class="title-popup-ask">AskQuestion</h3>
 
@@ -174,6 +175,7 @@ export default {
 .action-ask {
   float: right;
   margin-right: 20px;
+  margin-bottom: 10px;
   padding-top: 10px;
 }
 

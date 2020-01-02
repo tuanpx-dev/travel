@@ -29,8 +29,9 @@
           <div>
             <div class="home-list">
               <Question :question="questionDetail" :page="'home'"/>
-              <div v-if="!loading">
 
+              <div v-if="!loading">
+                <Comment />
               </div>
 
               <div v-else>
@@ -38,16 +39,6 @@
               </div>
             </div>
           </div>
-
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalPage"
-            :hide-goto-end-buttons="true"
-            per-page="limit"
-            prev-text="Prev"
-            next-text="Next"
-            @change="handlePage"
-          ></b-pagination>
         </div>
       </div>
 
@@ -61,23 +52,20 @@
 import Header from '../header/header'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
-import Paginate from 'vuejs-paginate'
 import Question from '../home/Question'
+import Comment from './Comment'
 
 export default {
   name: 'Home',
 
   components: {
     Header,
-    Paginate,
-    Question
+    Question,
+    Comment
   },
 
   data () {
     return {
-      currentPage: 1,
-      totalPage: 0,
-      limit: 0,
       loading: true,
       questionDetail: {},
       listAnswers: [],
