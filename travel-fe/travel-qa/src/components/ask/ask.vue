@@ -2,7 +2,7 @@
     <modal
       :name="name"
       width="60%"
-      maxHeight="600px"
+      height="auto"
       :reset="true"
       :scrollable="true"
       :clickToClose="false">
@@ -175,6 +175,7 @@ export default {
 .action-ask {
   float: right;
   margin-right: 20px;
+  margin-bottom: 10px;
   padding-top: 10px;
 }
 

@@ -29,8 +29,9 @@
           <div>
             <div class="home-list">
               <Question :question="questionDetail" :page="'home'"/>
-              <div v-if="!loading">
 
+              <div v-if="!loading">
+                <Comment />
               </div>
 
               <div v-else>
@@ -52,13 +53,15 @@ import Header from '../header/header'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
 import Question from '../home/Question'
+import Comment from './Comment'
 
 export default {
   name: 'Home',
 
   components: {
     Header,
-    Question
+    Question,
+    Comment
   },
 
   data () {

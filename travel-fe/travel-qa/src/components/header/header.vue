@@ -2,7 +2,7 @@
   <div class="row header">
     <div class="col-md-3">
       <div>
-        <p class="logo">TravelQA</p>
+        <p class="logo" @click="backToHome">TravelQA</p>
         <button class="button-ask" @click="addAsk()">Ask</button>
       </div>
     </div>
@@ -43,6 +43,10 @@ export default {
   },
 
   methods: {
+    backToHome () {
+      this.$router.push({ path: '/' })
+    },
+
     closeASK () {
       this.$modal.hide(this.namePopup)
     },
