@@ -18,3 +18,11 @@ export const URL = {
   // answers
   ANSWERS: '/answers/'
 }
+
+export const URL_INCOGNITO = {
+  // question
+  QUESTIONS: (offset) => `/questions/?offset=${offset}`,
+  CREATE_QUESTION: `/questions/`,
+  ANSWERS_QUESTION: (id) => `/questions/${id}/answers/`,
+  DETAIL_QUESTION: (id) => `/questions/${id}/`
+}

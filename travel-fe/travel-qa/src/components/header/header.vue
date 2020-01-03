@@ -9,7 +9,13 @@
     <div class="col-md-6"></div>
     <div class="col-md-3 user">
       <img v-if='user.img' :src="user.img" alt="" class="avatar-user">
-      <img v-else class="avatar-user" src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+      <img
+        v-else
+        class="avatar-user"
+        src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+        alt=""
+        @click="nextToProfile"
+      >
       <!-- <i class="fa fa-bell"></i> -->
     </div>
 
@@ -53,6 +59,10 @@ export default {
 
     addAsk () {
       this.$modal.show(this.namePopup)
+    },
+
+    nextToProfile () {
+      this.$router.push({ path: '/profile' })
     }
   }
 }

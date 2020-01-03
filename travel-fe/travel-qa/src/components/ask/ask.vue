@@ -18,7 +18,7 @@
       <div class="ask-title">
         <div class="ask-user">
           <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-          <p>{{ user.username }} has a question</p>
+          <p>{{ user.username }} has a question <i class="fa fa-sort-down"></i></p>
         </div>
         <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
       </div>
