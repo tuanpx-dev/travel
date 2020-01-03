@@ -1,5 +1,5 @@
 <template>
-  <div class="question" v-if="page === 'home'">
+  <div class="question">
     <div class="question-header col-md-12">
       <div class="coll-md-10 question-header">
         <p class="question-header-menu">Question about</p>
@@ -7,7 +7,7 @@
         <p class="question-header-menu">Category</p>
       </div>
       <div class="coll-md-2">
-        <b-dropdown v-if="this.page !== 'home'">
+        <b-dropdown v-if="page !== 'home'">
           <template v-slot:button-content>
             <i class="fa fa-edit"></i>
           </template>
@@ -84,11 +84,14 @@ export default {
   },
 
   // created () {
-  //   this.getListComment()
+  //   if (this.page === 'detail-question') {
+  //     this.hideComment = false
+  //   }
   // },
 
   methods: {
     viewDetail () {
+      if (this.page !== 'home') return
       this.$router.push({ path: '/detail-question', query: { id: this.question.id } })
     },
 
