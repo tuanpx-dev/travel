@@ -31,7 +31,9 @@
               <Question :question="questionDetail" :page="'home'"/>
 
               <div v-if="!loading">
-                <Comment />
+                <div v-for="answer in answers" :key="answer.id">
+                  <Comment :answer="answer"/>
+                </div>
               </div>
 
               <div v-else>
@@ -48,7 +50,6 @@
 </template>
 
 <script>
-// import { EventBus } from '../../eventBus'
 import Header from '../header/header'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
@@ -68,7 +69,7 @@ export default {
     return {
       loading: true,
       questionDetail: {},
-      listAnswers: [],
+      answers: [],
       options: []
     }
   },
@@ -85,7 +86,7 @@ export default {
       })
         .then(res => {
           this.questionDetail = res.data
-          this.getListComment(this.questionDetail.id)
+          this.getListAnswer(this.questionDetail.id)
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -95,7 +96,7 @@ export default {
         })
     },
 
-    getListComment (id) {
+    getListAnswer (id) {
       this.loading = true
 
       request({
