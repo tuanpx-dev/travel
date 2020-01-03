@@ -4,6 +4,9 @@ import Login from '@/components/Login'
 import Home from '../components/home/Home'
 import ResetPassWord from '@/components/ResetPassWord'
 import DetailQuestion from '../components/detailQuestion/detailQuestion'
+import ListQuestion from '../components/home/ListQuestion'
+import Profile from '../components/profile/Profile'
+import View from '../components/View'
 
 Vue.use(Router)
 
@@ -31,19 +34,44 @@ let router = new Router({
     },
     {
       path: '/',
-      name: 'Home',
-      component: Home,
+      name: 'View',
+      component: View,
       meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/detail-question',
-      name: 'DetailQuestion',
-      component: DetailQuestion,
-      meta: {
-        requiresAuth: true
-      }
+        requiresAuth: false
+      },
+      children: [
+        {
+          path: '/',
+          name: 'Home',
+          component: Home,
+          children: [
+            {
+              path: '/',
+              name: 'ListQuestion',
+              component: ListQuestion,
+              meta: {
+                requiresAuth: true
+              }
+            },
+            {
+              path: '/detail-question',
+              name: 'DetailQuestion',
+              component: DetailQuestion,
+              meta: {
+                requiresAuth: true
+              }
+            }
+          ]
+        },
+        {
+          path: '/profile',
+          name: 'Profile',
+          component: Profile,
+          meta: {
+            requiresAuth: false
+          }
+        }
+      ]
     }
   ],
   mode: 'history'

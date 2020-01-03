@@ -1,62 +1,31 @@
 <template>
-  <div class="container home">
-    <Header/>
-    <div class="row home-content">
-      <div class="row home-list-qa col-md-9">
-        <div class="home-sidebar col-md-4">
-          <select name="" id="" class="select-region">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
-          </select>
-          <div>
-            <div v-for="option in options" :key="option.value" class="home-add-option">
-              <input type="checkbox">
-              <p>{{ option.name }}</p>
-            </div>
+  <div class="row home-content">
+    <div class="row home-list-qa col-md-9">
+      <div class="home-sidebar col-md-4">
+        <select name="" id="" class="select-region">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <div>
+          <div v-for="option in options" :key="option.value" class="home-add-option">
+            <input type="checkbox">
+            <p>{{ option.name }}</p>
           </div>
-        </div>
-        <div class="col-md-8 list-qa">
-          <div class="home-header">
-            <input type="search" placeholder="search"/>
-          </div>
-          <div class="home-menu">
-            <button class="home-menu-page">Popular</button>
-            <button class="home-menu-page new">New</button>
-            <button class="home-menu-page new">Relation</button>
-          </div>
-          <div v-if="!loading">
-            <div class="home-list" v-for="question in questions" :key="question.id">
-            <Question :question="question" :page="'home'"/>
-          </div>
-          </div>
-
-          <div v-else>
-            <b-spinner class="m-5"></b-spinner>
-          </div>
-
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalPage"
-            :hide-goto-end-buttons="true"
-            per-page="limit"
-            prev-text="Prev"
-            next-text="Next"
-            @change="handlePage"
-          ></b-pagination>
         </div>
       </div>
-
-      <div class="col-md-3"></div>
+      <router-view/>
     </div>
+
+    <div class="col-md-3"></div>
   </div>
 </template>
 
 <script>
-import { EventBus } from '../../eventBus'
 import Header from '../header/header'
 import request from '../../../request/request'
+import ListQuestion from './ListQuestion'
 import Question from './Question'
 import { URL } from '../../api/URL'
 import Paginate from 'vuejs-paginate'
@@ -66,53 +35,22 @@ export default {
 
   components: {
     Question,
+    ListQuestion,
     Header,
     Paginate
   },
 
   data () {
     return {
-      currentPage: 1,
-      totalPage: 0,
-      limit: 0,
-      loading: true,
-      questions: [],
       options: []
     }
   },
 
   created () {
-    this.getQuestion(0)
     this.getCategory()
   },
 
-  updated () {
-    EventBus.$on('closeFormCreateASK', () => {
-      this.getQuestion(0)
-    })
-  },
-
   methods: {
-    getQuestion (offset) {
-      this.loading = true
-      request({
-        url: URL.QUESTIONS(offset),
-        method: 'get'
-      })
-        .then(res => {
-          this.loading = false
-          this.questions = res.data.content
-          this.totalPage = res.data.total_length
-          this.limit = res.data.limit
-        })
-        .catch((e) => {
-          if (e.response.status === 401) {
-            localStorage.setItem('user', null)
-            this.$router.push({ path: '/login' })
-          }
-        })
-    },
-
     getCategory () {
       request({
         url: URL.CATEGORY,
@@ -127,11 +65,6 @@ export default {
             this.$router.push({ path: '/login' })
           }
         })
-    },
-
-    handlePage (pageNumber) {
-      const offset = (pageNumber - 1) * this.limit
-      this.getQuestion(offset)
     }
   }
 }

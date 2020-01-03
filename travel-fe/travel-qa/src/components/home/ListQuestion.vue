@@ -8,79 +8,75 @@
       <button class="home-menu-page new">New</button>
       <button class="home-menu-page new">Relation</button>
     </div>
-    <div>
-      <div class="home-list">
-        <Question :question="questionDetail" :page="'home'"/>
-
-        <div v-if="!loading">
-          <div v-for="answer in answers" :key="answer.id">
-            <Comment :answer="answer"/>
-          </div>
-        </div>
-
-        <div v-else>
-          <b-spinner class="m-5"></b-spinner>
-        </div>
+    <div v-if="!loading">
+      <div class="home-list" v-for="question in questions" :key="question.id">
+        <Question :question="question" :page="'home'"/>
       </div>
     </div>
+
+    <div v-else>
+      <b-spinner class="m-5"></b-spinner>
+    </div>
+
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="totalPage"
+      :hide-goto-end-buttons="true"
+      per-page="limit"
+      prev-text="Prev"
+      next-text="Next"
+      @change="handlePage"
+    ></b-pagination>
   </div>
 </template>
 
 <script>
+import { EventBus } from '../../eventBus'
 import request from '../../../request/request'
+import Question from './Question'
 import { URL } from '../../api/URL'
-import Question from '../home/Question'
-import Comment from './Comment'
+import Paginate from 'vuejs-paginate'
 
 export default {
-  name: 'Home',
+  name: 'ListQuestion',
 
   components: {
     Question,
-    Comment
+    Paginate
   },
 
   data () {
     return {
+      currentPage: 1,
+      totalPage: 0,
+      limit: 0,
       loading: true,
-      questionDetail: {},
-      answers: [],
-      options: []
+      questions: []
     }
   },
 
   created () {
-    this.getDetailQuestion()
+    this.getQuestion(0)
+  },
+
+  updated () {
+    EventBus.$on('closeFormCreateASK', () => {
+      this.getQuestion(0)
+    })
   },
 
   methods: {
-    getDetailQuestion () {
-      request({
-        url: URL.DETAIL_QUESTION(this.$route.query.id),
-        method: 'get'
-      })
-        .then(res => {
-          this.questionDetail = res.data
-          this.getListAnswer(this.questionDetail.id)
-        })
-        .catch((e) => {
-          if (e.response.status === 401) {
-            localStorage.setItem('user', null)
-            this.$router.push({ path: '/login' })
-          }
-        })
-    },
-
-    getListAnswer (id) {
+    getQuestion (offset) {
       this.loading = true
-
       request({
-        url: URL.ANSWERS_QUESTION(id),
+        url: URL.QUESTIONS(offset),
         method: 'get'
       })
         .then(res => {
           this.loading = false
-          // this.questions = res.data.content
+          this.questions = res.data.content
+          this.totalPage = res.data.total_length
+          this.limit = res.data.limit
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -129,5 +125,10 @@ export default {
   padding: 5px 15px;
   color: black;
   background-color: white;
+}
+
+/* panigation */
+.b-pagination {
+  float: right;
 }
 </style>
