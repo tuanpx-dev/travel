@@ -1,7 +1,7 @@
 <template>
   <div class="row home-content">
     <div class="row home-list-qa col-md-9">
-      <div class="home-sidebar col-md-4">
+      <div class="home-sidebar col-md-4 col-xs-0">
         <select name="" id="" class="select-region">
           <option value="volvo">Volvo</option>
           <option value="saab">Saab</option>
@@ -137,5 +137,11 @@ export default {
 /* panigation */
 .b-pagination {
   float: right;
+}
+
+@media only screen and (max-width: 600px) {
+  .home-sidebar  {
+    display: none;
+  }
 }
 </style>

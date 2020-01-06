@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-8 list-qa">
+  <div class="col-md-8 col-xs-12 list-qa">
     <div class="home-header">
       <input type="search" placeholder="search"/>
     </div>
@@ -49,7 +49,7 @@ export default {
     return {
       currentPage: 1,
       totalPage: 0,
-      limit: 0,
+      limit: 10,
       loading: true,
       questions: []
     }

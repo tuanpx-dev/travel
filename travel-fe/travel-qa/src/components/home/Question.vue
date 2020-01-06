@@ -1,7 +1,7 @@
 <template>
   <div class="question">
-    <div class="question-header col-md-12">
-      <div class="coll-md-10 question-header">
+    <div class="question-header">
+      <div class="col-md-10 col-xs-11 question-header">
         <p class="question-header-menu">Question about</p>
         <p class="question-header-menu">Region</p>
         <p class="question-header-menu">Category</p>
@@ -28,15 +28,15 @@
       </div>
       <div class="question-review">
         <p><i class="fa fa-heart" @click="likeQuestion"></i> {{ like }}</p>&nbsp; &nbsp;
-        <p v-if="question.total_answers > 0 || comments.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ hideComment ? question.total_answers : comments.length }}</p>
+        <p v-if="question.total_answers > 0 || answres.length > 0"><i class="fa fa-comment" @click="showComment"></i> {{ hideAnswer ? question.total_answers : answres.length }}</p>
       </div>
 
       <div class="question-add-comment">
-        <input type="text" placeholder="Answer this question" v-model="answres" @keyup.enter="addAnswer" :disabled="isSendAnswer">
+        <input type="text" placeholder="Answer this question" v-model="answre" @keyup.enter="addAnswer" :disabled="isSendAnswer">
       </div>
 
-      <div v-if="(question.total_answers > 0 || comments.length > 0) && !hideComment">
-        <div class="question-comment" v-for="comment in comments" :key="comment.id">
+      <div v-if="(question.total_answers > 0 || answres.length > 0) && !hideAnswer">
+        <div class="question-comment" v-for="comment in answres" :key="comment.id">
           <div class="question-user">
             <img v-if="comment.user.img" :src="comment.user.img" alt="">
             <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
@@ -75,19 +75,20 @@ export default {
     return {
       showPopup: false,
       loading: false,
-      hideComment: true,
-      comments: [],
+      hideAnswer: true,
+      answres: [],
       like: 0,
-      answres: '',
+      answre: '',
       isSendAnswer: false
     }
   },
 
-  // created () {
-  //   if (this.page === 'detail-question') {
-  //     this.hideComment = false
-  //   }
-  // },
+  created () {
+    if (this.page === 'detail-question') {
+      this.hideAnswer = false
+      this.getListAnswer(this.question.id)
+    }
+  },
 
   methods: {
     viewDetail () {
@@ -96,17 +97,17 @@ export default {
     },
 
     showComment () {
-      this.getListComment()
-      this.hideComment = !this.hideComment
+      this.getListAnswer()
+      this.hideAnswer = !this.hideAnswer
     },
 
-    getListComment () {
+    getListAnswer () {
       request({
         url: URL.ANSWERS_QUESTION(this.question.id),
         method: 'get'
       })
         .then(res => {
-          this.comments = res.data.content
+          this.answres = res.data.content
         })
         .catch((e) => {
           if (e.response.status === '401') {
@@ -117,10 +118,10 @@ export default {
     },
 
     addAnswer () {
-      if (!this.answres) return
+      if (!this.answre) return
       this.isSendAnswer = true
       const data = {
-        body: this.answres,
+        body: this.answre,
         question_id: this.question.id
       }
 
@@ -130,9 +131,9 @@ export default {
         data: JSON.stringify(data)
       })
         .then(res => {
-          this.answres = ''
-          this.hideComment = false
-          this.getListComment()
+          this.answre = ''
+          this.hideAnswer = false
+          this.getListAnswer()
           this.isSendAnswer = false
         })
         .catch((e) => {
@@ -295,5 +296,11 @@ export default {
   background: none;
   border: none;
   color: gray;
+}
+
+@media only screen and (max-width: 600px) {
+  .question   {
+    border: none;
+  }
 }
 </style>

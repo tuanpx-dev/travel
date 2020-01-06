@@ -273,8 +273,13 @@ export default {
 }
 
 @media only screen and (max-width: 600px) {
+  .page-login {
+    background-color: white;
+  }
+
   .login {
     padding: 20px;
+    border: none;
   }
 
   .login h1 {
