@@ -5,12 +5,12 @@ export const URL = {
   RESET_PASSWORD: '/auth/reset_password',
 
   // question
-  QUESTIONS: (offset) => `/questions/auth-required-questions/?offset=${offset}`,
-  CREATE_QUESTION: `/questions/`,
-  LIKE_QUESTION: `/questions/likes/`,
-  ANSWERS_QUESTION: (id) => `/questions/${id}/answers/`,
+  QUESTIONS: (offset) => `/questions/auth-required-questions/?limit=10&offset=${offset}`,
+  ANSWERS_QUESTION: (id) => `/questions/auth-required-questions/${id}/answers/`,
   DETAIL_QUESTION: (id) => `/questions/auth-required-questions/${id}/`,
   DELETE_QUESTION: (id) => `/questions/${id}/`,
+  CREATE_QUESTION: `/questions/`,
+  LIKE_QUESTION: `/questions/likes/`,
 
   // category
   CATEGORY: '/category/',

@@ -7,14 +7,10 @@
 
 <script>
 import Header from './header/header'
-import Home from './home/Home'
-import DetailQuestion from './detailQuestion/detailQuestion'
 export default {
   name: 'View',
   components: {
-    Header,
-    Home,
-    DetailQuestion
+    Header
   },
   data () {
     return {

@@ -14,7 +14,7 @@
         class="avatar-user"
         src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
         alt=""
-        @click="nextToProfile"
+        @click="showModalProfile"
       >
       <!-- <i class="fa fa-bell"></i> -->
     </div>
@@ -23,6 +23,17 @@
       :name="namePopup"
       @closeASK="closeASK"
     />
+
+    <modal
+      name="avatar-profile"
+      :pivotX="1"
+      :pivotY="0"
+      :scrollable="true">
+
+      <div>
+        profile
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -49,6 +60,10 @@ export default {
   },
 
   methods: {
+    showModalProfile () {
+      this.$modal.show('avatar-profile')
+    },
+
     backToHome () {
       this.$router.push({ path: '/' })
     },

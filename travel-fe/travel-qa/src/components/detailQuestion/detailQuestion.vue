@@ -8,20 +8,19 @@
       <button class="home-menu-page new">New</button>
       <button class="home-menu-page new">Relation</button>
     </div>
-    <div>
+    <div v-if="!loading" >
       <div class="home-list">
-        <Question :question="questionDetail" :page="'home'"/>
+        <Question :question="questionDetail" :page="'detail-question'"/>
 
-        <div v-if="!loading">
+        <!-- <div>
           <div v-for="answer in answers" :key="answer.id">
             <Comment :answer="answer"/>
           </div>
-        </div>
-
-        <div v-else>
-          <b-spinner class="m-5"></b-spinner>
-        </div>
+        </div> -->
       </div>
+    </div>
+    <div v-else>
+      <b-spinner class="m-5"></b-spinner>
     </div>
   </div>
 </template>
@@ -33,7 +32,7 @@ import Question from '../home/Question'
 import Comment from './Comment'
 
 export default {
-  name: 'Home',
+  name: 'DetailQuestion',
 
   components: {
     Question,
@@ -80,7 +79,7 @@ export default {
       })
         .then(res => {
           this.loading = false
-          // this.questions = res.data.content
+          this.answers = res.data.content
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -88,11 +87,6 @@ export default {
             this.$router.push({ path: '/login' })
           }
         })
-    },
-
-    handlePage (pageNumber) {
-      const offset = (pageNumber - 1) * this.limit
-      this.getQuestion(offset)
     }
   }
 }
