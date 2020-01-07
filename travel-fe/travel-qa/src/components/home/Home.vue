@@ -1,6 +1,6 @@
 <template>
   <div class="row home-content">
-    <div class="row home-list-qa col-md-9">
+    <div class="home-list-qa col-md-9 col-xs-12">
       <div class="home-sidebar col-md-4 col-xs-0">
         <select name="" id="" class="select-region">
           <option value="volvo">Volvo</option>
@@ -18,7 +18,7 @@
       <router-view/>
     </div>
 
-    <div class="col-md-3"></div>
+    <div class="col-md-3 col-xs-0"></div>
   </div>
 </template>
 
@@ -77,6 +77,10 @@ export default {
 
 .home-content {
   margin-top: -40px;
+}
+
+.home-list-qa {
+  display: flex;
 }
 
 .home-header input {

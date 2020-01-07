@@ -29,14 +29,14 @@
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
 import Question from '../home/Question'
-import Comment from './Comment'
+// import Comment from './Comment'
 
 export default {
   name: 'DetailQuestion',
 
   components: {
-    Question,
-    Comment
+    Question
+    // Comment
   },
 
   data () {
