@@ -2,6 +2,10 @@
   <div class="col-md-8 list-qa">
     <div class="home-header">
       <input type="search" placeholder="search"/>
+      <div class="search">
+        <i class="fa fa-search"></i> &nbsp;
+        <p>search</p>
+      </div>
     </div>
     <div class="home-menu">
       <button class="home-menu-page">Popular</button>
@@ -29,14 +33,14 @@
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
 import Question from '../home/Question'
-import Comment from './Comment'
+// import Comment from './Comment'
 
 export default {
   name: 'DetailQuestion',
 
   components: {
-    Question,
-    Comment
+    Question
+    // Comment
   },
 
   data () {
@@ -93,8 +97,14 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.list-qa {
+  padding: 0;
+}
+
 .home-header {
   margin-bottom: 30px;
+  position: relative;
+  padding: 0 10px;
 }
 
 .home-content {
@@ -109,6 +119,18 @@ export default {
   padding: 20px;
   width: 100%;
   margin: 0 auto;
+}
+
+.search {
+  display: flex;
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  background-color: #CBE0FF;
+  height: 42px;
+  border-radius: 0 10px 10px 0;
+  padding: 10px;
+  text-align: center;
 }
 
 .home-menu {
