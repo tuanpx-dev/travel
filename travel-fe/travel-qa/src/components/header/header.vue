@@ -1,13 +1,12 @@
 <template>
   <div class="row header">
-    <div class="col-md-3">
+    <div class="col-md-3 col-xs-10 header-title-app">
       <div>
         <p class="logo" @click="backToHome">TravelQA</p>
         <button class="button-ask" @click="addAsk()">Ask</button>
       </div>
     </div>
-    <div class="col-md-6"></div>
-    <div class="col-md-3 user">
+    <div class="user">
       <img v-if='user.img' :src="user.img" alt="" class="avatar-user">
       <img
         v-else
@@ -85,7 +84,8 @@ export default {
 
 <style lang="css" scoped>
 .header {
-  margin-top: 20px;
+  padding-top: 20px;
+  justify-content: space-between;
 }
 
 .header .col-md-3{
@@ -220,4 +220,37 @@ export default {
   outline: none;
 }
 
+@media only screen and (max-width: 600px) {
+  .button-ask {
+    display: none;
+  }
+
+  .header {
+    background-color: #2761E6;
+    padding: 0;
+    margin-bottom: 10px;
+  }
+
+  .logo {
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 30px;
+    font-weight: 700;
+  }
+
+  .header .col-md-3{
+    z-index: 0;
+  }
+
+  .header-title-app {
+    position: relative;
+  }
+
+  .user {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+  }
+}
 </style>

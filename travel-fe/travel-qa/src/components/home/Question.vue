@@ -49,11 +49,11 @@
               </div>
 
               <p>{{ answre.body }}</p>
-
-              <div class="question-review">
-                <p><i class="fa fa-heart" @click="likeAnswer"></i> {{ answre.total_likes }}</p>
-              </div>
             </div>
+          </div>
+
+          <div class="question-review">
+            <p><i class="fa fa-heart" @click="likeAnswer"></i> {{ answre.total_likes }}</p>
           </div>
           <div class="comment-section">
             <Comment :answer="answre"/>
@@ -63,7 +63,7 @@
     </div>
 
     <Ask
-      v-if="showPopup"
+      v-if="isshowQuestion"
       @closeASK="closeASK"
       :question="question"
       :name="'edit-question'"
@@ -87,7 +87,7 @@ export default {
   },
   data () {
     return {
-      showPopup: false,
+      isshowQuestion: false,
       loading: false,
       hideAnswer: true,
       isShowComment: false,
@@ -213,6 +213,7 @@ export default {
       })
         .then(res => {
           EventBus.$emit('closeFormCreateASK')
+          this.$router.push({ path: '/' })
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -223,13 +224,13 @@ export default {
     },
 
     editQuestion () {
-      this.showPopup = true
+      this.isshowQuestion = true
       this.$modal.show('edit-question')
     },
 
     closeASK () {
-      this.showPopup = false
-      // this.$modal.hide('create-new-ask')
+      this.isshowQuestion = false
+      this.$modal.hide('edit-question')
     }
   }
 }

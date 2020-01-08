@@ -71,26 +71,13 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.home-header {
-  margin-bottom: 30px;
-}
-
 .home-content {
   margin-top: -40px;
 }
 
 .home-list-qa {
   display: flex;
-}
-
-.home-header input {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  height: 40px;
-  outline: none;
-  padding: 20px;
-  width: 100%;
-  margin: 0 auto;
+  padding: 0;
 }
 
 .home-sidebar {
@@ -98,6 +85,7 @@ export default {
   max-height: 500px;
   text-align: left;
   margin-top: 73px;
+  margin-right: 10px;
 }
 
 .select-region {
@@ -146,6 +134,10 @@ export default {
 @media only screen and (max-width: 600px) {
   .home-sidebar  {
     display: none;
+  }
+
+  .home-content {
+    margin-top: 0;
   }
 }
 </style>

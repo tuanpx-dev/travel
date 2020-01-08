@@ -4,9 +4,13 @@
       <input type="text" v-model="comment" placeholder="Comment" @keyup.enter="addComment">
     </div>
 
-    <div class="user-answer">
-      <img v-if="answer.user.img" :src="answer.user.img" alt="">
-      <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+    <div v-for="comment in comments" :key="comment.id" class="comment-item">
+      <div class="user-answer">
+        <img v-if="comment.user.img" :src="answer.user.img" alt="">
+        <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+        <p>{{ comment.user.username }} &nbsp; {{comment.created_at | moment('DD/MM')}}</p>
+      </div>
+      <p class="body-comment">{{ comment.body }}</p>
     </div>
   </div>
 </template>
@@ -26,6 +30,7 @@ export default {
     return {
       isEditComment: false,
       comment: '',
+      comments: [],
       isSendComment: false
     }
   },
@@ -124,7 +129,7 @@ export default {
 .comment-answer {
   width: 100%;
   text-align: center;
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 .comment-answer input {
@@ -133,5 +138,13 @@ export default {
   border: 1px solid #ccc;
   border-radius: 30px;
   padding-left: 10px;
+}
+
+.comment-item {
+  padding: 10px 10px 0 10px;
+}
+
+.body-comment {
+  padding: 5px 0 0 5px;
 }
 </style>

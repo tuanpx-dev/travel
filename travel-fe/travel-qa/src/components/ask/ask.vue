@@ -60,6 +60,7 @@ export default {
     }
 
     this.user = JSON.parse(localStorage.getItem('user')).data.user
+    console.log('name')
   },
 
   methods: {
