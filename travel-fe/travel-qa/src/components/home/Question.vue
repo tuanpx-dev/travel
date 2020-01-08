@@ -36,24 +36,27 @@
       </div>
 
       <div v-if="(question.total_answers > 0 || answres.length > 0) && !hideAnswer">
-        <div class="question-comment" v-for="answre in answres" :key="answre.id">
-          <div class="question-user">
-            <img v-if="answre.user.img" :src="answre.user.img" alt="">
-            <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+        <div v-for="answre in answres" :key="answre.id">
+          <div class="question-comment">
+            <div class="question-user">
+              <img v-if="answre.user.img" :src="answre.user.img" alt="">
+              <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+            </div>
+            <div class="question-answer">
+
+              <div class="comment-user">
+                <p>{{answre.user.username}}</p> <p>{{answre.created_at | moment('DD/MM')}}</p>
+              </div>
+
+              <p>{{ answre.body }}</p>
+
+              <div class="question-review">
+                <p><i class="fa fa-heart" @click="likeAnswer"></i> {{ answre.total_likes }}</p>
+              </div>
+            </div>
           </div>
-          <div class="question-answer">
-
-            <div class="comment-user">
-              <p>{{answre.user.username}}</p> <p>{{answre.created_at | moment('DD/MM')}}</p>
-            </div>
-
-            <p>{{ answre.body }}</p>
-
-            <div class="question-review">
-              <p><i class="fa fa-heart" @click="likeAnswer"></i> 12</p>
-            </div>
-
-            <Comment :answre="answre"/>
+          <div class="comment-section">
+            <Comment :answer="answre"/>
           </div>
         </div>
       </div>
@@ -262,6 +265,10 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+.question-answer {
+  width: 100%;
 }
 
 .question-answer p{

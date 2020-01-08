@@ -1,19 +1,12 @@
 <template>
-  <div>
+  <div class="comment-answer-question">
+    <div class="comment-answer">
+      <input type="text" v-model="comment" placeholder="Comment" @keyup.enter="addComment">
+    </div>
+
     <div class="user-answer">
       <img v-if="answer.user.img" :src="answer.user.img" alt="">
       <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-      <div>
-        <p>name</p>
-        <p>time</p>
-      </div>
-    </div>
-
-    <p>detail of the answer</p>
-
-    <div class="question-review">
-      <p><i class="fa fa-heart"></i> 1 </p>&nbsp; &nbsp;
-      <p><i class="fa fa-comment"></i>1</p>
     </div>
   </div>
 </template>
@@ -38,6 +31,7 @@ export default {
   },
 
   created () {
+    console.log(this.answer)
     this.getListComment()
   },
 
@@ -68,7 +62,7 @@ export default {
       }
 
       request({
-        url: URL.COMMENT,
+        url: URL.CREATE_COMMENT,
         method: 'post',
         data: JSON.stringify(data)
       })
@@ -111,7 +105,33 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.comment-answer-question {
+  margin: 5px 0;
+  background-color: #F4F7FC;
+  border: 1px solid #b8daff;
+}
+
 .user-answer {
   display: flex;
+}
+
+.user-answer img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.comment-answer {
+  width: 100%;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.comment-answer input {
+  width: 95%;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  padding-left: 10px;
 }
 </style>

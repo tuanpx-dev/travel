@@ -95,6 +95,10 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.list-qa {
+  padding: 0;
+}
+
 .home-header {
   margin-bottom: 30px;
 }
