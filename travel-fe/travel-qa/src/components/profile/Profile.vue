@@ -1,24 +1,49 @@
 <template>
   <div class="profile">
     <div class="avartar-name">
-
+      <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+      <p>name</p>
     </div>
+    <div class="border-content-profile"></div>
 
     <div class="note-des">
-
+      xxxxx
     </div>
+    <div class="border-content-profile"></div>
 
     <div class="review-user">
-      <div class="change-review">
-        <p class="change-title">Name</p>
-        <p v-if="true" class="user-name">hâhhaha</p>
-        <input v-else type="text">
-        <p>icon edit</p>
+      <p class="title-section">Account setting</p>
+      <div>
+        <div class="change-review">
+          <p class="change-title title-section">Name</p>
+          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <input v-else type="text">
+          <p class="icon-edit-review title-section">icon edit</p>
+        </div>
+        <div class="change-review">
+          <p class="change-title title-section">Name</p>
+          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <input v-else type="text">
+          <p class="icon-edit-review title-section">icon edit</p>
+        </div>
+        <div class="change-review">
+          <p class="change-title title-section">Name</p>
+          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <input v-else type="text">
+          <p class="icon-edit-review title-section">icon edit</p>
+        </div>
+        <div class="change-review">
+          <p class="change-title title-section">Name</p>
+          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <input v-else type="text">
+          <p class="icon-edit-review title-section">icon edit</p>
+        </div>
       </div>
     </div>
+    <div class="border-content-profile"></div>
 
     <div class="interest">
-      <p>title</p>
+      <p>Interest</p>
       <div class="category">
         <p>Category</p>
         <div class="list-category">
@@ -52,4 +77,56 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.profile {
+  margin: 0 -15px;
+  text-align: left
+}
+.avartar-name {
+  display: flex;
+  padding-left: 10px
+}
+
+.avartar-name img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.avartar-name p {
+  font-size: 20px;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+
+.note-des {
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.review-user {
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.change-review {
+  display: flex;
+  padding: 5px 10px 0 10px;
+  border-bottom: 1px solid #CBE0FF;
+}
+
+.change-title {
+  width: 40%;
+}
+
+.border-content-profile {
+  border-top: 1px solid #2761E6;
+  height: 5px;
+  background-color: #CBE0FF;
+  margin-bottom: 5px;
+}
+
+.title-section {
+  padding: 0;
+  margin: 0;
+}
 </style>
