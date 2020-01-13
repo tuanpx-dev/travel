@@ -18,12 +18,15 @@
       <div class="ask-title">
         <div class="ask-user">
           <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-          <p>{{ user.username }} has a question <i class="fa fa-sort-down"></i></p>
+          <p>{{ user.username }} has a question <i class="fa fa-sort-down" @click="showFilter"></i></p>
         </div>
-        <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
       </div>
 
-      <Category />
+      <Category v-if="isShowFilter" class="ask-title"/>
+
+      <div class="ask-title">
+        <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
+      </div>
 
       <div class="ask-deatail">
         <textarea placeholder="Enter your question details here" rows="4" cols="50" v-model="detailQuestion">
@@ -54,7 +57,8 @@ export default {
     return {
       titleQuestion: '',
       detailQuestion: '',
-      user: {}
+      user: {},
+      isShowFilter: false
     }
   },
 
@@ -66,7 +70,6 @@ export default {
     }
 
     this.user = JSON.parse(localStorage.getItem('user')).data.user
-    console.log('name')
   },
 
   methods: {
@@ -100,6 +103,10 @@ export default {
             this.$router.push({ path: '/login' })
           }
         })
+    },
+
+    showFilter () {
+      this.isShowFilter = !this.isShowFilter
     }
   }
 }
@@ -204,4 +211,9 @@ export default {
   outline: none;
 }
 
+/* @media only screen and (max-width: 600px) {
+  .v--modal-overlay {
+    width: 350px !important;
+  }
+} */
 </style>
