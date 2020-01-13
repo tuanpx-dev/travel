@@ -125,7 +125,7 @@ export default {
 }
 
 .search {
-  display: flex;
+  display: none;
   position: absolute;
   right: 10px;
   top: 0px;
@@ -157,6 +157,10 @@ export default {
 @media only screen and (max-width: 600px) {
   .home-menu {
     width: 100%;
+  }
+
+  .search {
+    display: flex;
   }
 
   .home-menu-page {

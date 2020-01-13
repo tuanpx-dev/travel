@@ -78,7 +78,8 @@ export default {
 
 <style lang="css" scoped>
 .profile {
-  margin: 0 -15px;
+  width: 50%;
+  margin: 0 auto;
   text-align: left
 }
 .avartar-name {
@@ -128,5 +129,11 @@ export default {
 .title-section {
   padding: 0;
   margin: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .profile {
+    width: 100%;
+  }
 }
 </style>

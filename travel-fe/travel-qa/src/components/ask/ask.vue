@@ -23,6 +23,8 @@
         <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
       </div>
 
+      <Category />
+
       <div class="ask-deatail">
         <textarea placeholder="Enter your question details here" rows="4" cols="50" v-model="detailQuestion">
         </textarea>
@@ -39,10 +41,14 @@
 import { EventBus } from '../../eventBus'
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
+import Category from './Filter'
 
 export default {
   name: 'Ask',
   props: ['question', 'name'],
+  components: {
+    Category
+  },
 
   data () {
     return {
