@@ -1,7 +1,7 @@
 <template>
   <div class="profile">
-    <div class="desktop-profile">
-      <div class="profile-username">
+    <div class="">
+      <div class="profile-username desktop-profile">
         <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
         <div>
           <div class="user-profile-deatail">
@@ -12,126 +12,66 @@
           <div class="follow">24 followers</div>
         </div>
       </div>
+
       <div class="row">
-        <div class="sidebar-profile col-md-3">
-          <button class="sidebar-profile-action active-profile">Profile</button>
-          <button class="sidebar-profile-action">Question</button>
-          <button class="sidebar-profile-action">Answers</button>
+        <div class="sidebar-profile col-md-3 desktop-profile">
+          <button class="sidebar-profile-action" @click="nextToProfileUser" :class="{ 'active-profile': activeSidebar === 1 }">Profile</button>
+          <button class="sidebar-profile-action" @click="nextToMyQuestion" :class="{ 'active-profile': activeSidebar === 2 }">Question</button>
+          <button class="sidebar-profile-action" @click="nextToMyAnswer" :class="{ 'active-profile': activeSidebar === 3 }">Answers</button>
         </div>
-        <div class="col-md-9">
-          <div class="note-des">
-            xxxxx
-          </div>
-          <div class="border-content-profile-destop"></div>
 
-          <div class="review-user">
-            <p class="title-section">Account setting</p>
-          <div>
-          <div class="change-review-desktop">
-            <p class="change-title title-section">Name</p>
-            <p v-if="true" class="change-value title-section">{{user.username}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review-desktop">
-            <p class="change-title title-section">Age</p>
-            <p v-if="true" class="change-value title-section">{{user.age}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review-desktop">
-            <p class="change-title title-section">E-mail</p>
-            <p v-if="true" class="change-value title-section">{{user.email}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review-desktop">
-            <p class="change-title title-section">Password</p>
-            <p v-if="true" class="change-value title-section change-password">Change the password</p>
-            <input v-else type="text">
-          </div>
-            </div>
-          </div>
-          <div class="border-content-profile-destop"></div>
-
-          <div class="interest">
-            <p>Interest</p>
-            <Category />
-          </div>
-          </div>
+        <router-view></router-view>
       </div>
-    </div>
 
-    <div class="mobile-profile">
-      <div class="avartar-name">
-        <img src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
-        <p>name</p>
-      </div>
-      <div class="border-content-profile"></div>
-
-      <div class="note-des">
-        xxxxx
-      </div>
-      <div class="border-content-profile"></div>
-
-      <div class="review-user">
-        <p class="title-section">Account setting</p>
-        <div>
-          <div class="change-review">
-            <p class="change-title title-section">Name</p>
-            <p v-if="true" class="change-value title-section">{{user.username}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review">
-            <p class="change-title title-section">Age</p>
-            <p v-if="true" class="change-value title-section">{{user.age}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review">
-            <p class="change-title title-section">E-mail</p>
-            <p v-if="true" class="change-value title-section">{{user.email}}</p>
-            <input v-else type="text">
-            <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
-          </div>
-          <div class="change-review">
-            <p class="change-title title-section">Password</p>
-            <p v-if="true" class="change-value title-section change-password">Change the password</p>
-            <input v-else type="text">
-          </div>
-        </div>
-      </div>
-      <div class="border-content-profile"></div>
-
-      <div class="interest">
-        <p>Interest</p>
-        <Category />
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Category from '../ask/Filter'
+import ProfileUser from './ProfileUser'
+
 export default {
   name: 'Profile',
   components: {
-    Category
+    Category,
+    ProfileUser
   },
 
   data () {
     return {
-      user: {}
+      user: {},
+      activeSidebar: 1
     }
   },
 
   created () {
     this.user = JSON.parse(localStorage.getItem('user')).data.user
+
+    if (this.$router.currentRoute.name === 'ProfileUser') {
+      this.activeSidebar = 1
+    } else if (this.$router.currentRoute.name === 'MyQuestion') {
+      this.activeSidebar = 2
+    } else {
+      this.activeSidebar = 3
+    }
   },
 
   methods: {
+    nextToMyQuestion () {
+      this.$router.push({ path: '/myQuestion' })
+      this.activeSidebar = 2
+    },
 
+    nextToProfileUser () {
+      this.$router.push({ path: '/profile' })
+      this.activeSidebar = 1
+    },
+
+    nextToMyAnswer () {
+      this.$router.push({ path: '/myAnswers' })
+      this.activeSidebar = 3
+    }
   }
 }
 </script>
@@ -168,7 +108,8 @@ export default {
 
 .sidebar-profile {
   border: 1px solid black;
-  min-height: 300px;
+  height: 400px;
+  max-height: 500px;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -184,15 +125,11 @@ export default {
   text-align: left;
   padding: 10px;
   margin-bottom: 5px;
+  outline: none;
 }
 
 .mobile-profile {
   display: none;
-}
-
-.avartar-name {
-  display: flex;
-  padding-left: 10px
 }
 
 .avartar-name img {
@@ -280,6 +217,11 @@ export default {
 
   .mobile-profile {
     display: block;
+  }
+
+  .avartar-name {
+    display: flex;
+    padding-left: 10px
   }
 }
 </style>

@@ -58,8 +58,22 @@ export default {
       titleQuestion: '',
       detailQuestion: '',
       user: {},
-      isShowFilter: false
+      isShowFilter: false,
+      category_id: [],
+      areas: []
     }
+  },
+
+  updated () {
+    EventBus.$on('addCategory', (category) => {
+      this.category_id = category
+      console.log(this.category_id)
+    })
+
+    EventBus.$on('addArea', (areas) => {
+      this.areas = areas
+      console.log(this.areas)
+    })
   },
 
   created () {
@@ -209,6 +223,11 @@ export default {
   padding: 5px 10px;
   font-weight: 700;
   outline: none;
+}
+
+.fa-sort-down {
+  padding-left: 5px;
+  font-size: 25px;
 }
 
 /* @media only screen and (max-width: 600px) {

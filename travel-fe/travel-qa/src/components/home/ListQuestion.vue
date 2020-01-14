@@ -7,6 +7,13 @@
         <p>search</p>
       </div>
     </div>
+
+    <div class="filter-home">
+      <p class="title-filter-home">Filter: </p> &nbsp;&nbsp;
+      <p v-for="(filter, index) in filters" :key="index" class="filter-item">{{filter}}</p>
+      <p class="add-filter-home"  @click="showPopupFilter"> + </p>
+    </div>
+
     <div class="home-menu">
       <div class="home-menu-page arrow_box">Popular</div>
       <div class="home-menu-page">New ></div>
@@ -32,6 +39,23 @@
       next-text="Next"
       @change="handlePage"
     ></b-pagination>
+
+    <modal
+      name="home-filter-popup"
+      width="80%"
+      height="auto"
+      :pivotY="0.1"
+      :scrollable="true"
+      :clickToClose="false">
+      <div class="header-popup-filter">
+        <p>Filter</p>
+      </div>
+      <Category />
+      <div class="footer-popup-filter">
+        <button class="cancel-popup" @click="closeFilter">Cancel</button>
+        <button class="filter-home-action" @click="addFilterHome">Filter</button>
+      </div>
+    </modal>
   </div>
 </template>
 
@@ -41,13 +65,15 @@ import request from '../../../request/request'
 import Question from './Question'
 import { URL } from '../../api/URL'
 import Paginate from 'vuejs-paginate'
+import Category from '../ask/Filter'
 
 export default {
   name: 'ListQuestion',
 
   components: {
     Question,
-    Paginate
+    Paginate,
+    Category
   },
 
   data () {
@@ -56,7 +82,9 @@ export default {
       totalPage: 0,
       limit: 10,
       loading: true,
-      questions: []
+      questions: [],
+      filters: [],
+      listFilter: []
     }
   },
 
@@ -67,6 +95,10 @@ export default {
   updated () {
     EventBus.$on('closeFormCreateASK', () => {
       this.getQuestion(0)
+    })
+
+    EventBus.$on('addFilter', (listFiler) => {
+      this.listFilter = listFiler
     })
   },
 
@@ -94,6 +126,19 @@ export default {
     handlePage (pageNumber) {
       const offset = (pageNumber - 1) * this.limit
       this.getQuestion(offset)
+    },
+
+    showPopupFilter () {
+      this.$modal.show('home-filter-popup')
+    },
+
+    closeFilter () {
+      this.$modal.hide('home-filter-popup')
+    },
+
+    addFilterHome () {
+      this.filters = this.listFilter
+      this.$modal.hide('home-filter-popup')
     }
   }
 }
@@ -154,13 +199,78 @@ export default {
   float: right;
 }
 
+.filter-home {
+ display: none;
+}
+
+.add-filter-home {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-popup-filter {
+  background-color: #2761E6;
+  padding: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  padding-top: 20px;
+}
+
+.footer-popup-filter {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.cancel-popup {
+  background: none;
+  border: none;
+  margin-right: 10px;
+}
+
+.title-filter-home {
+  margin: 0;
+}
+
+.filter-home-action {
+    background-color: #2761E6;
+    margin-right: 10px;
+    padding: 5px 20px;
+    border-radius: 10px;
+    border: 1px solid #2761E6;
+    color: white;
+}
+
+.filter-item {
+  margin: 0 10px;
+  background-color: #CBE0FF;
+  border-radius: 5px;
+  padding: 0 5px;
+}
+
 @media only screen and (max-width: 600px) {
   .home-menu {
     width: 100%;
   }
 
+  .home-header {
+    margin-bottom: 15px;
+  }
+
   .search {
     display: flex;
+  }
+
+  .filter-home {
+    padding-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 15px;
   }
 
   .home-menu-page {

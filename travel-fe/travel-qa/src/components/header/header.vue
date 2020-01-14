@@ -13,9 +13,19 @@
         class="avatar-user"
         src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
         alt=""
+        @click="nextToProfile"
+      >
+    </div>
+
+    <div class="user-mobile" v-if="isShowAvatar">
+      <img v-if='user.img' :src="user.img" alt="" class="avatar-user">
+      <img
+        v-else
+        class="avatar-user"
+        src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+        alt=""
         @click="showModalProfile"
       >
-      <!-- <i class="fa fa-bell"></i> -->
     </div>
 
     <Ask
@@ -27,10 +37,41 @@
       name="avatar-profile"
       :pivotX="1"
       :pivotY="0"
+      width="50%"
+      height="auto"
       :scrollable="true">
 
-      <div>
-        profile
+      <div class="popup-profile-avarta">
+        <img v-if='user.img' :src="user.img" alt="">
+        <img
+          v-else
+          src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+          alt=""
+        >
+        <p>{{user.username}}</p>
+      </div>
+
+      <div class="ask-popup-profile">
+        <button>Ask</button>
+      </div>
+      <div class="popup-profile-border"></div>
+
+      <div class="menu-profile">
+        <p>Post</p>
+        <div>
+          <p @click="nextToMyQuestion">My question</p>
+          <p @click="nextToMyAnswer">My answer</p>
+        </div>
+      </div>
+      <div class="popup-profile-border"></div>
+
+      <div class="list-category-profile">
+        <p>Category</p>
+        <p class="category-item-profile" v-for="(category, index) in categorys" :key="index">{{category.name}}</p>
+      </div>
+      <div class="action-profile-popup">
+        <div @click="nextToProfile">Profile</div>
+        <div>Logout</div>
       </div>
     </modal>
   </div>
@@ -38,6 +79,8 @@
 
 <script>
 import Ask from '../ask/ask'
+import request from '../../../request/request'
+import { URL } from '../../api/URL'
 
 export default {
   name: 'Header',
@@ -51,18 +94,30 @@ export default {
       titleQuestion: '',
       detailQuestion: '',
       user: {},
-      isShowAvatar: true
+      isShowAvatar: true,
+      categorys: []
     }
   },
 
   created () {
+    this.getCategory()
     this.user = JSON.parse(localStorage.getItem('user')).data.user
-    if (this.$router.currentRoute.name === 'Profile') {
+    if (this.$router.currentRoute.name === 'ProfileUser') {
       this.isShowAvatar = false
     }
   },
 
   methods: {
+    nextToMyQuestion () {
+      this.$router.push({ path: '/myQuestion' })
+      this.$modal.hide('avatar-profile')
+    },
+
+    nextToMyAnswer () {
+      this.$router.push({ path: '/myAnswers' })
+      this.$modal.hide('avatar-profile')
+    },
+
     showModalProfile () {
       this.$modal.show('avatar-profile')
     },
@@ -81,6 +136,23 @@ export default {
 
     nextToProfile () {
       this.$router.push({ path: '/profile' })
+      this.$modal.hide('avatar-profile')
+    },
+
+    getCategory () {
+      request({
+        url: URL.CATEGORY,
+        method: 'get'
+      })
+        .then(res => {
+          this.categorys = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
     }
   }
 }
@@ -119,6 +191,11 @@ export default {
 }
 /* user */
 .user {
+  display: block;
+}
+
+.user-mobile {
+  display: none;
 }
 
 .avatar-user {
@@ -229,6 +306,10 @@ export default {
     display: none;
   }
 
+  .user {
+    display: none;
+  }
+
   .header {
     background-color: #2761E6;
     padding: 0;
@@ -251,10 +332,75 @@ export default {
     position: relative;
   }
 
-  .user {
+  .user-mobile {
+    display: block;
     position: absolute;
     right: 5px;
     top: 8px;
+  }
+
+  .popup-profile-avarta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    background-color: #2761E6;
+    color: white;
+  }
+
+  .popup-profile-avarta img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  .popup-profile-avarta p {
+    padding-top: 10px;
+    font-weight: 700;
+  }
+
+  .ask-popup-profile {
+    text-align: center;
+  }
+
+  .ask-popup-profile button {
+    padding: 5px 20px;
+    background-color: #2761E6;
+    margin: 10px 0;
+    color: white;
+    border: 1px;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  .popup-profile-border {
+    border-top: 1px solid #2761E6;
+    height: 5px;
+    background-color: #CBE0FF;
+  }
+
+  .menu-profile {
+    line-height: 1;
+    padding-left: 10px;
+  }
+
+  .menu-profile div {
+    padding-left: 10px;
+  }
+
+  .list-category-profile {
+    padding-left: 10px;
+    line-height: 1;
+  }
+
+  .category-item-profile {
+    padding-left: 10px;
+  }
+
+  .action-profile-popup {
+    background-color: #CBE0FF;
+    padding: 10px;
   }
 }
 </style>

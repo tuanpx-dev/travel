@@ -4,7 +4,7 @@
       <div class="filter-category">
         <p class="filter-title">Category</p>
         <div v-for="category in categorys" :key="category.id" class="category-item">
-          <input type="checkbox" name="" id="">
+          <input type="checkbox" name="" id="" @change="checkcategory(category)">
           <p>{{ category.name }}</p>
         </div>
       </div>
@@ -16,7 +16,7 @@
         <p class="filter-title">Area</p>
 
         <div v-for="(area, index) in areas" :key="index" class="list-option">
-          <select  v-model="area.start">
+          <select  v-model="area.start" @change="handleArea()">
             <option value="">--- Select ---</option>
             <option value="volvo">Volvo</option>
             <option value="saab">Saab</option>
@@ -24,7 +24,7 @@
             <option value="audi">Audi</option>
           </select>
 
-          <select v-model="area.end">
+          <select v-model="area.end" @change="handleArea()">
             <option value="">--- Select ---</option>
             <option value="volvo">Volvo</option>
             <option value="saab">Saab</option>
@@ -49,6 +49,7 @@
 <script>
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
+import { EventBus } from '../../eventBus'
 
 export default {
   name: 'Filter',
@@ -57,7 +58,10 @@ export default {
     return {
       categorys: [],
       areas: [{ start: '', end: '' }],
-      loading: true
+      loading: true,
+      listFilter: [],
+      listCategory: [],
+      listArea: []
     }
   },
 
@@ -105,6 +109,25 @@ export default {
         start: '',
         end: ''
       })
+    },
+
+    checkcategory (category) {
+      if (this.listFilter.filter(el => el === category.name).length > 0) {
+        this.listFilter = this.listFilter.filter(el => el !== category.name)
+        this.listCategory = this.listCategory.filter(el => el !== category.id)
+      } else {
+        this.listFilter.push(category.name)
+        this.listCategory.push(category.id)
+      }
+
+      EventBus.$emit('addFilter', this.listFilter)
+      EventBus.$emit('addCategory', this.listCategory)
+    },
+
+    handleArea () {
+      let listArea = this.areas.map(el => `${el.start} > ${el.end}`)
+      EventBus.$emit('addFilter', this.listFilter.concat(listArea))
+      EventBus.$emit('addArea', this.areas)
     }
   }
 }
