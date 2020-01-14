@@ -8,9 +8,9 @@
       </div>
     </div>
     <div class="home-menu">
-      <button class="home-menu-page">Popular</button>
-      <button class="home-menu-page new">New</button>
-      <button class="home-menu-page new">Relation</button>
+      <button class="home-menu-page arrow_box">Popular</button>
+      <button class="home-menu-page new">New ></button>
+      <button class="home-menu-page new">Relation ></button>
     </div>
     <div v-if="!loading" >
       <div class="home-list">
@@ -122,7 +122,7 @@ export default {
 }
 
 .search {
-  display: flex;
+  display: none;
   position: absolute;
   right: 10px;
   top: 0px;
@@ -145,5 +145,52 @@ export default {
   padding: 5px 15px;
   color: black;
   background-color: white;
+}
+
+@media only screen and (max-width: 600px) {
+  .home-menu {
+    width: 100%;
+  }
+
+  .search {
+    display: flex;
+  }
+
+  .home-menu-page {
+    width: calc(100% /3);
+    background-color: #CBE0FF;
+    border: 1px solid #8BA9F2;
+    color: #2C65E7;
+  }
+
+  .arrow_box {
+    position: relative;
+    background: #2761E6;
+    border: 1px solid #c2e1f5;
+    color: #fff;
+  }
+  .arrow_box:after, .arrow_box:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .arrow_box:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: #2761E6;
+    border-width: 10px;
+    margin-left: -10px;
+  }
+  .arrow_box:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-top-color: #c2e1f5;
+    border-width: 10px;
+    margin-left: -10px;
+  }
 }
 </style>
