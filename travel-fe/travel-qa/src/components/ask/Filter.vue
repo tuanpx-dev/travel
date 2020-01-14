@@ -1,13 +1,17 @@
 <template>
   <div>
     <div v-if="!loading">
-       <div class="filter-category">
+      <div class="filter-category">
         <p class="filter-title">Category</p>
         <div v-for="category in categorys" :key="category.id" class="category-item">
           <input type="checkbox" name="" id="">
           <p>{{ category.name }}</p>
         </div>
       </div>
+
+      <div v-if="showborder" class="border-content-ask"></div>
+      <div v-else class="border-content-profile"></div>
+
       <div class="filter-area">
         <p class="filter-title">Area</p>
 
@@ -48,7 +52,7 @@ import { URL } from '../../api/URL'
 
 export default {
   name: 'Filter',
-
+  props: ['showborder'],
   data () {
     return {
       categorys: [],
@@ -153,5 +157,17 @@ export default {
   padding: 1px 7px;
   border-radius: 50%;
   margin-right: 5px;
+}
+
+.border-content-ask {
+  border-top: 1px solid #2761E6;
+  height: 5px;
+  background-color: #CBE0FF;
+  margin-bottom: 5px;
+}
+
+.border-content-profile {
+  border-bottom: 1px solid #CBE0FF;
+  margin-left: 10px;
 }
 </style>
