@@ -7,9 +7,9 @@
         <p class="question-header-menu">Category</p>
       </div>
       <div class="coll-md-2">
-        <b-dropdown v-if="page !== 'home'">
+        <b-dropdown v-if="page === 'detail-question'">
           <template v-slot:button-content>
-            <i class="fa fa-edit"></i>
+            <i class="fa fa-pencil" style="color: #2761E6"></i>
           </template>
           <b-dropdown-item @click="editQuestion">Edit</b-dropdown-item>
           <b-dropdown-item @click="deleteQuestion">Delete</b-dropdown-item>
@@ -55,7 +55,7 @@
           <div class="question-review">
             <p><i class="fa fa-heart" @click="likeAnswer"></i> {{ answre.total_likes }}</p>
           </div>
-          <div class="comment-section">
+          <div class="comment-section" v-if="page !== 'myAnswer'">
             <Comment :answer="answre"/>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default {
   },
 
   created () {
-    if (this.page === 'detail-question') {
+    if (this.page === 'detail-question' || this.page === 'myAnswer') {
       this.hideAnswer = false
       this.getListAnswer(this.question.id)
     }

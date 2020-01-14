@@ -36,7 +36,6 @@ export default {
   },
 
   created () {
-    console.log(this.answer)
     this.getListComment()
   },
 

@@ -6,6 +6,9 @@ import ResetPassWord from '@/components/ResetPassWord'
 import DetailQuestion from '../components/detailQuestion/detailQuestion'
 import ListQuestion from '../components/home/ListQuestion'
 import Profile from '../components/profile/Profile'
+import ProfileUser from '../components/profile/ProfileUser'
+import MyQuestion from '../components/profile/MyQuestion'
+import MyAnswers from '../components/profile/myAnswers'
 import View from '../components/View'
 
 Vue.use(Router)
@@ -69,7 +72,33 @@ let router = new Router({
           component: Profile,
           meta: {
             requiresAuth: false
-          }
+          },
+          children: [
+            {
+              path: '/profile',
+              name: 'ProfileUser',
+              component: ProfileUser,
+              meta: {
+                requiresAuth: false
+              }
+            },
+            {
+              path: '/myQuestion',
+              name: 'MyQuestion',
+              component: MyQuestion,
+              meta: {
+                requiresAuth: false
+              }
+            },
+            {
+              path: '/myAnswers',
+              name: 'MyAnswers',
+              component: MyAnswers,
+              meta: {
+                requiresAuth: false
+              }
+            }
+          ]
         }
       ]
     }
