@@ -6,7 +6,7 @@
         <button class="button-ask" @click="addAsk()">Ask</button>
       </div>
     </div>
-    <div class="user">
+    <div class="user" v-if="isShowAvatar">
       <img v-if='user.img' :src="user.img" alt="" class="avatar-user">
       <img
         v-else
@@ -50,12 +50,16 @@ export default {
       namePopup: 'create-ask',
       titleQuestion: '',
       detailQuestion: '',
-      user: {}
+      user: {},
+      isShowAvatar: true
     }
   },
 
   created () {
     this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (this.$router.currentRoute.name === 'Profile') {
+      this.isShowAvatar = false
+    }
   },
 
   methods: {
