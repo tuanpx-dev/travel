@@ -16,27 +16,26 @@
       <div>
         <div class="change-review">
           <p class="change-title title-section">Name</p>
-          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <p v-if="true" class="change-value title-section">{{user.username}}</p>
           <input v-else type="text">
-          <p class="icon-edit-review title-section">icon edit</p>
+          <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
         </div>
         <div class="change-review">
-          <p class="change-title title-section">Name</p>
-          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <p class="change-title title-section">Age</p>
+          <p v-if="true" class="change-value title-section">{{user.age}}</p>
           <input v-else type="text">
-          <p class="icon-edit-review title-section">icon edit</p>
+          <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
         </div>
         <div class="change-review">
-          <p class="change-title title-section">Name</p>
-          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <p class="change-title title-section">E-mail</p>
+          <p v-if="true" class="change-value title-section">{{user.email}}</p>
           <input v-else type="text">
-          <p class="icon-edit-review title-section">icon edit</p>
+          <p class="icon-edit-review title-section"><i class="fa fa-pencil" style="color: #2761E6"></i></p>
         </div>
         <div class="change-review">
-          <p class="change-title title-section">Name</p>
-          <p v-if="true" class="change-title title-section">hâhhaha</p>
+          <p class="change-title title-section">Password</p>
+          <p v-if="true" class="change-value title-section change-password">Change the password</p>
           <input v-else type="text">
-          <p class="icon-edit-review title-section">icon edit</p>
         </div>
       </div>
     </div>
@@ -44,30 +43,27 @@
 
     <div class="interest">
       <p>Interest</p>
-      <div class="category">
-        <p>Category</p>
-        <div class="list-category">
-
-        </div>
-      </div>
-      <div class="area">
-
-      </div>
+      <Category />
     </div>
   </div>
 </template>
 
 <script>
+import Category from '../ask/Filter'
 export default {
   name: 'Profile',
-
   components: {
+    Category
   },
 
   data () {
     return {
-
+      user: {}
     }
+  },
+
+  created () {
+    this.user = JSON.parse(localStorage.getItem('user')).data.user
   },
 
   methods: {
@@ -102,6 +98,8 @@ export default {
 .note-des {
   padding-left: 10px;
   font-size: 14px;
+  height: 70px;
+  max-height: 100px;
 }
 
 .review-user {
@@ -116,7 +114,15 @@ export default {
 }
 
 .change-title {
-  width: 40%;
+  width: 35%;
+}
+
+.change-value {
+  width: 60%;
+}
+
+.change-password {
+  color: #2761E6;
 }
 
 .border-content-profile {
