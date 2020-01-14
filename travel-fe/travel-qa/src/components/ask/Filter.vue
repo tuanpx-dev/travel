@@ -141,10 +141,12 @@ export default {
 }
 
 .list-option select {
-  width: 150px;
+  width: 45%;
+  max-width: 150px;
   height: 35px;
   padding-left: 5px;
   margin-bottom: 10px;
+  border: 1px solid #ccc;
 }
 
 .add-area {
