@@ -30,6 +30,7 @@
 
     <Ask
       :name="namePopup"
+      :width="widthPopup"
       @closeASK="closeASK"
     />
 
@@ -52,7 +53,7 @@
       </div>
 
       <div class="ask-popup-profile">
-        <button>Ask</button>
+        <button @click="addAskMobile()">Ask</button>
       </div>
       <div class="popup-profile-border"></div>
 
@@ -95,7 +96,8 @@ export default {
       detailQuestion: '',
       user: {},
       isShowAvatar: true,
-      categorys: []
+      categorys: [],
+      widthPopup: ''
     }
   },
 
@@ -131,6 +133,13 @@ export default {
     },
 
     addAsk () {
+      this.widthPopup = '60%'
+      this.$modal.show(this.namePopup)
+    },
+
+    addAskMobile () {
+      this.$modal.hide('avatar-profile')
+      this.widthPopup = '90%'
       this.$modal.show(this.namePopup)
     },
 

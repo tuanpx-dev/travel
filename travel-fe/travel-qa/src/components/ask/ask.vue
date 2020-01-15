@@ -1,7 +1,7 @@
 <template>
     <modal
       :name="name"
-      width="60%"
+      :width="width"
       height="auto"
       :reset="true"
       :scrollable="true"
@@ -48,7 +48,7 @@ import Category from './Filter'
 
 export default {
   name: 'Ask',
-  props: ['question', 'name'],
+  props: ['question', 'name', 'width'],
   components: {
     Category
   },
