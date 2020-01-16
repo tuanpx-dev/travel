@@ -30,7 +30,14 @@
 
     <Ask
       :name="namePopup"
+      :width="'60%'"
       @closeASK="closeASK"
+    />
+
+    <Ask
+      :name="'create-ask-mobile'"
+      :width="'90%'"
+      @closeASK="closeASKMobile"
     />
 
     <modal
@@ -52,7 +59,7 @@
       </div>
 
       <div class="ask-popup-profile">
-        <button>Ask</button>
+        <button @click="addAskMobile()">Ask</button>
       </div>
       <div class="popup-profile-border"></div>
 
@@ -130,8 +137,17 @@ export default {
       this.$modal.hide(this.namePopup)
     },
 
+    closeASKMobile () {
+      this.$modal.hide('create-ask-mobile')
+    },
+
     addAsk () {
       this.$modal.show(this.namePopup)
+    },
+
+    addAskMobile () {
+      this.$modal.hide('avatar-profile')
+      this.$modal.show('create-ask-mobile')
     },
 
     nextToProfile () {

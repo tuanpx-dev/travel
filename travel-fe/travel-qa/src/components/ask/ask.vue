@@ -1,7 +1,7 @@
 <template>
     <modal
       :name="name"
-      width="60%"
+      :width="width"
       height="auto"
       :reset="true"
       :scrollable="true"
@@ -48,7 +48,7 @@ import Category from './Filter'
 
 export default {
   name: 'Ask',
-  props: ['question', 'name'],
+  props: ['question', 'name', 'width'],
   components: {
     Category
   },
@@ -90,8 +90,12 @@ export default {
     createASK () {
       if (!this.titleQuestion || !this.detailQuestion) return
 
+      let url = URL.CREATE_QUESTION
+      let method = 'post'
+
       if (this.question) {
-        // todo
+        method = 'put'
+        url = URL.EDIT_QUESTION(this.question.id)
       }
 
       const data = {
@@ -101,8 +105,8 @@ export default {
       }
 
       request({
-        url: URL.CREATE_QUESTION,
-        method: 'post',
+        url: url,
+        method: method,
         data: JSON.stringify(data)
       })
         .then(res => {

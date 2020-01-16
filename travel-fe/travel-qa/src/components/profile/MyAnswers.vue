@@ -11,6 +11,7 @@
 
     <div v-for="question in questions" :key="question.id">
       <Question :question="question" :page="'myAnswer'"/>
+      <div class="my-question-item"></div>
     </div>
   </div>
 </template>
@@ -84,6 +85,13 @@ export default {
 
   .mobile-profile {
     display: flex;
+  }
+
+  .my-question-item {
+    border-top: 1px solid #2761E6;
+    height: 5px;
+    background-color: #CBE0FF;
+    margin-bottom: 5px;
   }
 }
 </style>

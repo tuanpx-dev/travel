@@ -1,10 +1,5 @@
 <template>
-  <div class="comment-answer-question">
-    <div class="comment-answer">
-      <input type="text" v-model="comment" placeholder="Comment" @keyup.enter="addComment">
-    </div>
-
-    <!-- <div v-for="comment in comments" :key="comment.id" class="comment-item">
+    <div class="comment-item">
       <div class="user-answer-header">
         <div class="user-answer">
           <img v-if="comment.user.img" :src="comment.user.img" alt="">
@@ -17,41 +12,33 @@
             <template v-slot:button-content>
               <i class="fa fa-pen" style="color: #2761E6"></i>
             </template>
-            <b-dropdown-item @click="isEditComment =! isEditComment">Edit</b-dropdown-item>
+            <b-dropdown-item @click="actionEdit">Edit</b-dropdown-item>
             <b-dropdown-item @click="deleteComment(comment.id)">Delete</b-dropdown-item>
           </b-dropdown>
         </div>
       </div>
       <p v-if="!isEditComment" class="body-comment">{{ comment.body }}</p>
-      <input type="text" v-else v-model="commentText" @keyup.enter="editComment(comment.id)">
-    </div> -->
-    <div v-for="comment in comments" :key="comment.id">
-     <CommentItem  :comment="comment" :page="page" :answer="answer"/>
+      <input class="input-edit-comment" placeholder="comment editer" type="text" v-else v-model="commentText" @keyup.enter="editComment(comment.id)">
     </div>
-  </div>
 </template>
 
 <script>
 import { URL } from '../../api/URL'
 import request from '../../../request/request'
 import Ask from '../ask/ask'
-import CommentItem from './CommentItem'
 import { EventBus } from '../../eventBus'
 
 export default {
-  name: 'Comment',
-  props: [ 'answer', 'page' ],
+  name: 'CommentItem',
+  props: [ 'answer', 'comment', 'page' ],
   components: {
-    Ask,
-    CommentItem
+    Ask
   },
 
   data () {
     return {
       isEditComment: false,
       commentText: '',
-      comment: '',
-      comments: [],
       isSendComment: false,
       user: {}
     }
@@ -59,32 +46,9 @@ export default {
 
   created () {
     this.user = JSON.parse(localStorage.getItem('user')).data.user
-
-    this.getListComment()
-  },
-
-  updated () {
-    EventBus.$on('getlistcomment', () => {
-      this.getListComment()
-    })
   },
 
   methods: {
-    getListComment () {
-      request({
-        url: URL.ANSWERS_COMMENT(this.answer.id),
-        method: 'get'
-      })
-        .then(res => {
-          this.comments = res.data.content
-        })
-        .catch((e) => {
-          if (e.response.status === '401') {
-            localStorage.setItem('user', null)
-            this.$router.push({ path: '/login' })
-          }
-        })
-    },
 
     addComment () {
       if (!this.comment) return
@@ -108,6 +72,57 @@ export default {
         .catch((e) => {
           this.isSendComment = false
 
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    actionEdit () {
+      this.isEditComment = !this.isEditComment
+      this.commentText = this.comment.body
+    },
+
+    editComment (id) {
+      if (!this.commentText) return
+
+      this.isSendComment = true
+      const data = {
+        body: this.commentText,
+        answer_id: this.answer.id
+      }
+
+      request({
+        url: URL.EDIT_COMMENT(id),
+        method: 'put',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.commentText = ''
+          EventBus.$emit('getlistcomment')
+          this.isSendComment = false
+          this.isEditComment = false
+        })
+        .catch((e) => {
+          this.isSendComment = false
+
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    deleteComment (id) {
+      request({
+        url: URL.DELETE_COMMENT(id),
+        method: 'delete'
+      })
+        .then(res => {
+          EventBus.$emit('getlistcomment')
+        })
+        .catch((e) => {
           if (e.response.status === 401) {
             localStorage.setItem('user', null)
             this.$router.push({ path: '/login' })
@@ -161,5 +176,15 @@ export default {
 .user-answer-header {
   display: flex;
   justify-content: space-between;
+}
+
+.input-edit-comment {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    outline: none;
+    padding-left: 10px;
 }
 </style>

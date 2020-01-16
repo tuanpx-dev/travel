@@ -8,6 +8,7 @@ export const URL = {
   QUESTIONS: (offset) => `/questions/auth-required-questions/?limit=10&offset=${offset}`,
   DETAIL_QUESTION: (id) => `/questions/auth-required-questions/${id}/`,
   DELETE_QUESTION: (id) => `/questions/${id}/`,
+  EDIT_QUESTION: (id) => `/questions/${id}/`,
   CREATE_QUESTION: `/questions/`,
   LIKE_QUESTION: `/questions/likes/`,
 
