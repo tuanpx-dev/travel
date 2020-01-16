@@ -22,7 +22,7 @@
             <p v-if="true" class="change-value title-section">{{user.username}}</p>
             <input v-else type="text" />
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pencil" style="color: #2761E6"></i>
+              <i class="fa fa-pen" style="color: #2761E6"></i>
             </p>
           </div>
           <div class="change-review-desktop">
@@ -30,7 +30,7 @@
             <p v-if="true" class="change-value title-section">{{user.age}}</p>
             <input v-else type="text" />
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pencil" style="color: #2761E6"></i>
+              <i class="fa fa-pen" style="color: #2761E6"></i>
             </p>
           </div>
           <div class="change-review-desktop">
@@ -38,7 +38,7 @@
             <p v-if="true" class="change-value title-section">{{user.email}}</p>
             <input v-else type="text" />
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pencil" style="color: #2761E6"></i>
+              <i class="fa fa-pen" style="color: #2761E6"></i>
             </p>
           </div>
           <div class="change-review-desktop">
