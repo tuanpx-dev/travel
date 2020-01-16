@@ -8,7 +8,7 @@ import ListQuestion from '../components/home/ListQuestion'
 import Profile from '../components/profile/Profile'
 import ProfileUser from '../components/profile/ProfileUser'
 import MyQuestion from '../components/profile/MyQuestion'
-import MyAnswers from '../components/profile/myAnswers'
+import MyAnswers from '../components/profile/MyAnswers'
 import View from '../components/View'
 
 Vue.use(Router)
