@@ -33,7 +33,7 @@
 import request from '../../../request/request'
 import { URL } from '../../api/URL'
 import Question from '../home/Question'
-// import Comment from './Comment'
+import { EventBus } from '../../eventBus'
 
 export default {
   name: 'DetailQuestion',
@@ -54,6 +54,12 @@ export default {
 
   created () {
     this.getDetailQuestion()
+  },
+
+  updated () {
+    EventBus.$on('closeFormCreateASK', () => {
+      this.getDetailQuestion()
+    })
   },
 
   methods: {

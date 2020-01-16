@@ -7,9 +7,9 @@
         <p class="question-header-menu">Category</p>
       </div>
       <div class="coll-md-2">
-        <b-dropdown v-if="page === 'detail-question'">
+        <b-dropdown v-if="page === 'detail-question' && user.id === question.user.id">
           <template v-slot:button-content>
-            <i class="fa fa-pencil" style="color: #2761E6"></i>
+            <i class="fa fa-pen" style="color: #2761E6"></i>
           </template>
           <b-dropdown-item @click="editQuestion">Edit</b-dropdown-item>
           <b-dropdown-item @click="deleteQuestion">Delete</b-dropdown-item>
@@ -27,7 +27,7 @@
         <p>{{ question.user.username }} &nbsp; Poster: {{ question.created_at | moment('DD/MM') }}</p>
       </div>
       <div class="question-review">
-        <p><i class="fa fa-heart" @click="likeQuestion"></i> {{ like }}</p>&nbsp; &nbsp;
+        <p><i class="far fa-heart" @click="likeQuestion(question.like)" :class="{ 'like-item' : question.like }"></i> {{ question.total_likes }}</p>&nbsp; &nbsp;
         <p v-if="question.total_answers > 0 || answres.length > 0"><i class="fa fa-comment" @click="showAnswer"></i> {{ hideAnswer ? question.total_answers : answres.length }}</p>
       </div>
 
@@ -50,13 +50,23 @@
 
               <p>{{ answre.body }}</p>
             </div>
+
+            <div class="coll-md-2">
+              <b-dropdown v-if="page === 'detail-question' && user.id === answre.user.id">
+                <template v-slot:button-content>
+                  <i class="fa fa-pen" style="color: #2761E6"></i>
+                </template>
+                <b-dropdown-item @click="editAnswer(answre.id)">Edit</b-dropdown-item>
+                <b-dropdown-item @click="deleteAnswer(answre.id)">Delete</b-dropdown-item>
+              </b-dropdown>
+            </div>
           </div>
 
           <div class="question-review">
-            <p><i class="fa fa-heart" @click="likeAnswer"></i> {{ answre.total_likes }}</p>
+            <p><i class="far fa-heart" @click="likeAnswer(answre)" :class="{ 'like-item' : answre.like }"></i> {{ answre.total_likes }}</p>
           </div>
           <div class="comment-section" v-if="page !== 'myAnswer'">
-            <Comment :answer="answre"/>
+            <Comment :answer="answre" :page="page"/>
           </div>
         </div>
       </div>
@@ -64,9 +74,10 @@
 
     <Ask
       v-if="isshowQuestion"
+      :name="'edit-question'"
       @closeASK="closeASK"
       :question="question"
-      :name="'edit-question'"
+      :width="'90%'"
     />
   </div>
 </template>
@@ -87,6 +98,7 @@ export default {
   },
   data () {
     return {
+      user: {},
       isshowQuestion: false,
       loading: false,
       hideAnswer: true,
@@ -99,6 +111,8 @@ export default {
   },
 
   created () {
+    this.user = JSON.parse(localStorage.getItem('user')).data.user
+
     if (this.page === 'detail-question' || this.page === 'myAnswer') {
       this.hideAnswer = false
       this.getListAnswer(this.question.id)
@@ -160,6 +174,10 @@ export default {
         })
     },
 
+    editAnswer (id) {
+
+    },
+
     showComment (answre) {
       this.isShowComment = !this.isShowComment
       this.getListComment(answre)
@@ -181,11 +199,46 @@ export default {
         })
     },
 
-    likeAnswer () {
-      // todo
+    likeAnswer (answer) {
+      if (answer.like) return
+
+      request({
+        url: URL.LIKE_ANSWER,
+        method: 'post',
+        data: JSON.stringify({
+          answer_id: answer.id
+        })
+      })
+        .then(res => {
+          this.getListAnswer()
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
     },
 
-    likeQuestion () {
+    deleteAnswer (id) {
+      request({
+        url: URL.DELETE_ANSWER(id),
+        method: 'delete'
+      })
+        .then(res => {
+          this.getListAnswer()
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    likeQuestion (like) {
+      if (like) return
+
       const data = {
         question_id: this.question.id
       }
@@ -196,7 +249,8 @@ export default {
         data: JSON.stringify(data)
       })
         .then(res => {
-          // todo
+          this.question.like = true
+          this.question.total_likes = this.question.total_likes + 1
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -225,7 +279,9 @@ export default {
 
     editQuestion () {
       this.isshowQuestion = true
-      this.$modal.show('edit-question')
+      setTimeout(() => {
+        this.$modal.show('edit-question')
+      }, 500)
     },
 
     closeASK () {
@@ -343,6 +399,10 @@ export default {
   background: none;
   border: none;
   color: gray;
+}
+
+.like-item {
+  color: #ADC3F6;
 }
 
 @media only screen and (max-width: 600px) {

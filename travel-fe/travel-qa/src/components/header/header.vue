@@ -30,8 +30,14 @@
 
     <Ask
       :name="namePopup"
-      :width="widthPopup"
+      :width="'60%'"
       @closeASK="closeASK"
+    />
+
+    <Ask
+      :name="'create-ask-mobile'"
+      :width="'90%'"
+      @closeASK="closeASKMobile"
     />
 
     <modal
@@ -96,8 +102,7 @@ export default {
       detailQuestion: '',
       user: {},
       isShowAvatar: true,
-      categorys: [],
-      widthPopup: ''
+      categorys: []
     }
   },
 
@@ -132,15 +137,17 @@ export default {
       this.$modal.hide(this.namePopup)
     },
 
+    closeASKMobile () {
+      this.$modal.hide('create-ask-mobile')
+    },
+
     addAsk () {
-      this.widthPopup = '60%'
       this.$modal.show(this.namePopup)
     },
 
     addAskMobile () {
       this.$modal.hide('avatar-profile')
-      this.widthPopup = '90%'
-      this.$modal.show(this.namePopup)
+      this.$modal.show('create-ask-mobile')
     },
 
     nextToProfile () {
