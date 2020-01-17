@@ -3,14 +3,14 @@
     <div class="col-md-9">
       <div class="avartar-name mobile-profile">
         <img
-          src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+          :src="user.avarta"
           alt
         />
-        <p>name</p>
+        <p>{{user.username}}</p>
       </div>
       <div class="border-content-profile mobile-profile"></div>
 
-      <div class="note-des">xxxxx</div>
+      <div class="note-des">{{user.place}}</div>
       <div class="border-content-profile-destop"></div>
       <div class="border-content-profile mobile-profile"></div>
 
@@ -18,33 +18,46 @@
         <p class="title-section">Account setting</p>
         <div>
           <div class="change-review-desktop">
-            <p class="change-title title-section">Name</p>
-            <p v-if="true" class="change-value title-section">{{user.username}}</p>
-            <input v-else type="text" />
+            <p class="change-title title-section">Residence</p>
+            <p v-if="!isEditName" class="change-value title-section">{{user.username}}</p>
+            <input v-else type="text" v-model="username" class="input-edit"/>
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pen" style="color: #2761E6"></i>
+              <i v-if="!isEditName" class="fa fa-pen" style="color: #2761E6" @click="edit('name')"></i>
+              <i v-else class="fas fa-check" style="color: green;" @click="editDone('name')"></i>
             </p>
           </div>
           <div class="change-review-desktop">
             <p class="change-title title-section">Age</p>
-            <p v-if="true" class="change-value title-section">{{user.age}}</p>
-            <input v-else type="text" />
+            <p v-if="!isEditAge" class="change-value title-section">{{user.age}}</p>
+            <input v-else type="text" v-model="age" class="input-edit"/>
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pen" style="color: #2761E6"></i>
+              <i v-if="!isEditAge" class="fa fa-pen" style="color: #2761E6" @click="edit('age')"></i>
+              <i v-else class="fas fa-check" style="color: green;" @click="editDone('age')"></i>
             </p>
           </div>
           <div class="change-review-desktop">
             <p class="change-title title-section">E-mail</p>
-            <p v-if="true" class="change-value title-section">{{user.email}}</p>
-            <input v-else type="text" />
+            <p v-if="!isEditEmail" class="change-value title-section">{{user.email}}</p>
+            <input v-else type="text" v-model="email" class="input-edit"/>
             <p class="icon-edit-review title-section">
-              <i class="fa fa-pen" style="color: #2761E6"></i>
+              <i v-if="!isEditEmail" class="fa fa-pen" style="color: #2761E6" @click="edit('email')"></i>
+              <i v-else class="fas fa-check" style="color: green;" @click="editDone('email')"></i>
             </p>
           </div>
           <div class="change-review-desktop">
             <p class="change-title title-section">Password</p>
-            <p v-if="true" class="change-value title-section change-password">Change the password</p>
-            <input v-else type="text" />
+            <p v-if="!isEditPass" class="change-value title-section change-password" @click="edit('pass')">Change the password</p>
+            <div v-else >
+              <div>
+                <input type="text" v-model="oldPass" class="input-edit"/>
+                <input type="text" v-model="newPass" class="input-edit"/>
+              </div>
+              <p v-if="errorPass" style="color: red;">The password is incorrect! </p>
+              <div>
+                <button class="cancel-save-pass" @click="cancelPass">Cancel</button>
+                <button class="button-save-pass" @click="editPass">Save</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -60,6 +73,9 @@
 
 <script>
 import Category from '../ask/Filter'
+import request from '../../../request/request'
+import {URL} from '../../api/URL'
+
 export default {
   name: 'Profile',
   components: {
@@ -68,7 +84,18 @@ export default {
 
   data () {
     return {
-      user: {}
+      user: {},
+      isEditName: false,
+      isEditAge: false,
+      isEditEmail: false,
+      isEditPass: false,
+      errorPass: false,
+
+      username: '',
+      age: '',
+      email: '',
+      oldPass: '',
+      newPass: ''
     }
   },
 
@@ -76,7 +103,101 @@ export default {
     this.user = JSON.parse(localStorage.getItem('user')).data.user
   },
 
-  methods: {}
+  methods: {
+    edit (edit) {
+      switch (edit) {
+        case 'name':
+          this.isEditName = true
+          this.username = this.user.username
+          // this.editProfile(edit)
+          break
+        case 'age':
+          this.isEditAge = true
+          this.age = this.user.age
+          // this.editProfile(edit)
+          break
+        case 'email':
+          this.isEditEmail = true
+          this.email = this.user.email
+          // this.editProfile(edit)
+          break
+        case 'pass':
+          this.isEditPass = true
+          break
+        default:
+          break
+      }
+    },
+
+    editDone (key) {
+      let data = {
+        display_name: this.user.username,
+        email: this.user.email,
+        age: this.user.age,
+        place: '',
+        avatar: this.user.avatar
+      }
+
+      switch (key) {
+        case 'name':
+          this.isEditName = false
+          data.display_name = this.username
+          break
+        case 'age':
+          this.isEditAge = false
+          data.age = this.age
+          break
+        case 'email':
+          this.isEditEmail = false
+          data.email = this.email
+          break
+        default:
+          break
+      }
+
+      request({
+        url: URL.EDIR_USER,
+        method: 'put',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    editPass () {
+      let data = {
+        old_password: this.oldPass,
+        new_password: this.newPass
+      }
+
+      request({
+        url: URL.EDIT_PASS,
+        method: 'put',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.isEditPass = false
+        })
+        .catch((e) => {
+          this.errorPass = true
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    cancelPass () {
+      this.isEditPass = false
+    }
+  }
 }
 </script>
 
@@ -205,6 +326,31 @@ export default {
 
 .interest {
   padding-left: 10px;
+}
+
+.input-edit {
+  width: 55%;
+  border: 1px solid #ccc;
+  padding-left: 5px;
+  border-radius: 5px;
+  margin-right: 15px;
+  margin-bottom: 3px;
+}
+
+.button-save-pass {
+  background-color: green;
+  padding: 0 10px;
+  border-radius: 5px;
+  border: 1px;
+  outline: none;
+  color: white;
+}
+
+.cancel-save-pass {
+    border-radius: 5px;
+    background-color: red;
+    color: white;
+    padding: 0 10px
 }
 
 @media only screen and (max-width: 600px) {

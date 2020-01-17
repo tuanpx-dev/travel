@@ -58,7 +58,13 @@ export default {
   },
 
   created () {
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
 
     this.getListComment()
   },

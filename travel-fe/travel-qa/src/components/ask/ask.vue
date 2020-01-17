@@ -83,7 +83,14 @@ export default {
       this.detailQuestion = this.question.body
     }
 
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
+
   },
 
   methods: {

@@ -4,6 +4,9 @@ export const URL = {
   LOGIN_FACEBOOK: '/auth/login_fb/',
   RESET_PASSWORD: '/auth/reset_password',
 
+  // search
+  SEARCH: `/questions/auth-required-search/`,
+
   // question
   QUESTIONS: (offset) => `/questions/auth-required-questions/?limit=10&offset=${offset}`,
   DETAIL_QUESTION: (id) => `/questions/auth-required-questions/${id}/`,
@@ -14,6 +17,7 @@ export const URL = {
 
   // category
   CATEGORY: '/category/',
+  AREA: '/area/',
 
   // answers
   ANSWERS_QUESTION: (answerId) => `/questions/auth-required-questions/${answerId}/answers/`,
@@ -26,13 +30,19 @@ export const URL = {
   ANSWERS_COMMENT: (answerId) => `/answers/${answerId}/comments/`,
   CREATE_COMMENT: `comments/`,
   EDIT_COMMENT: (commentId) => `/comments/${commentId}/`,
-  DELETE_COMMENT: (commentId) => `/comments/${commentId}/`
+  DELETE_COMMENT: (commentId) => `/comments/${commentId}/`,
+
+  // profile
+  EDIR_USER: `/user/profile/`,
+  EDIT_PASS: `/user/change-password/`
 }
 
 export const URL_INCOGNITO = {
   // question
-  QUESTIONS: (offset) => `/questions/?offset=${offset}`,
+  QUESTIONS: (offset) => `/questions/?limit=10&offset=${offset}`,
   CREATE_QUESTION: `/questions/`,
   ANSWERS_QUESTION: (id) => `/questions/${id}/answers/`,
-  DETAIL_QUESTION: (id) => `/questions/${id}/`
+  DETAIL_QUESTION: (id) => `/questions/${id}/`,
+
+  SEARCH: `/questions/search/`
 }

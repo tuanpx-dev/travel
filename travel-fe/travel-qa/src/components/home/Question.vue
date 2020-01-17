@@ -27,8 +27,31 @@
         <p>{{ question.user.username }} &nbsp; Poster: {{ question.created_at | moment('DD/MM') }}</p>
       </div>
       <div class="question-review">
-        <p><i class="far fa-heart" @click="likeQuestion(question.like)" :class="{ 'like-item' : question.like }"></i> {{ question.total_likes }}</p>&nbsp; &nbsp;
-        <p v-if="question.total_answers > 0 || answres.length > 0"><i class="fa fa-comment" @click="showAnswer"></i> {{ hideAnswer ? question.total_answers : answres.length }}</p>
+        <div class="question-review">
+          <p><i class="far fa-heart" @click="likeQuestion(question.like)" :class="{ 'like-item' : question.like }"></i> {{ question.total_likes }}</p>&nbsp; &nbsp;
+          <p v-if="question.total_answers > 0 || answres.length > 0"><i class="far fa-comment" @click="showAnswer"></i> {{ hideAnswer ? question.total_answers : answres.length }}</p>
+        </div>
+
+        <div class="question-review">
+          <p style="font-size: 14px; padding: 5px;">Share:</p> &nbsp;&nbsp;
+          <social-sharing
+            url=""
+            :title="question.title"
+            :description="question.body"
+            quote="Travel-QA"
+            hashtags="TravelQA"
+            :twitter-user="question.user.username"
+            inline-template>
+            <div>
+              <network network="facebook">
+              <i class="fab fa-facebook" style="color: #3B5998; font-size: 18px"></i>
+            </network>
+            <network network="twitter">
+              <i class="fab fa-twitter" style="color: #1DA1F2; font-size: 18px"></i>
+            </network>
+            </div>
+          </social-sharing>
+        </div>
       </div>
 
       <div class="question-add-comment">
@@ -40,7 +63,7 @@
           <div class="question-comment">
             <div class="question-user">
               <img v-if="answre.user.img" :src="answre.user.img" alt="">
-              <img v-else src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35" alt="">
+              <img v-else src="../../assets/avarta.jpg" alt="">
             </div>
             <div class="question-answer">
 
@@ -84,7 +107,7 @@
 
 <script>
 import { EventBus } from '../../eventBus'
-import { URL } from '../../api/URL'
+import { URL, URL_INCOGNITO } from '../../api/URL'
 import request from '../../../request/request'
 import Ask from '../ask/ask'
 import Comment from './Comment'
@@ -111,7 +134,13 @@ export default {
   },
 
   created () {
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
 
     if (this.page === 'detail-question' || this.page === 'myAnswer') {
       this.hideAnswer = false
@@ -131,8 +160,16 @@ export default {
     },
 
     getListAnswer () {
+      let url = ''
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.ANSWERS_QUESTION(this.question.id)
+      } else {
+        url = URL.ANSWERS_QUESTION(this.question.id)
+      }
+
       request({
-        url: URL.ANSWERS_QUESTION(this.question.id),
+        url: url,
         method: 'get'
       })
         .then(res => {
@@ -200,6 +237,8 @@ export default {
     },
 
     likeAnswer (answer) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       if (answer.like) return
 
       request({
@@ -237,6 +276,8 @@ export default {
     },
 
     likeQuestion (like) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       if (like) return
 
       const data = {
@@ -364,6 +405,7 @@ export default {
 .question-review {
   font-size: 20px;
   display: flex;
+  justify-content: space-between;
 }
 
 .question-add-comment {

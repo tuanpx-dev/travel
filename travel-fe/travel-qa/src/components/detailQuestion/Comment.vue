@@ -20,7 +20,7 @@
 
 <script>
 import { EventBus } from '../../eventBus'
-import { URL } from '../../api/URL'
+import { URL, URL_INCOGNITO } from '../../api/URL'
 import request from '../../../request/request'
 import Ask from '../ask/ask'
 export default {
@@ -52,8 +52,15 @@ export default {
     },
 
     getListComment () {
+      let url = ''
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.ANSWERS_QUESTION(this.question.id)
+      } else {
+        url = URL.ANSWERS_QUESTION(this.question.id)
+      }
       request({
-        url: URL.ANSWERS_QUESTION(this.question.id),
+        url: url,
         method: 'get'
       })
         .then(res => {
