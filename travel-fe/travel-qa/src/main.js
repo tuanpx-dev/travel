@@ -11,6 +11,9 @@ import VueAxios from 'vue-axios'
 import VModal from 'vue-js-modal'
 import Paginate from 'vuejs-paginate'
 
+var SocialSharing = require('vue-social-sharing')
+Vue.use(SocialSharing)
+
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
 Vue.use(VModal, {

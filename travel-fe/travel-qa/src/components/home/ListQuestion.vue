@@ -1,7 +1,7 @@
 <template>
   <div class="col-md-8 col-xs-12 list-qa">
     <div class="home-header">
-      <input type="search" placeholder="search by keyword"/>
+      <input type="search" placeholder="search by keyword" v-model="search" @change="searchQuestion"/>
       <div class="search">
         <i class="fa fa-search"></i> &nbsp;
         <p>search</p>
@@ -84,7 +84,9 @@ export default {
       loading: true,
       questions: [],
       filters: [],
-      listFilter: []
+      listFilter: [],
+      search: ''
+      // filterCategory: []
     }
   },
 
@@ -100,9 +102,58 @@ export default {
     EventBus.$on('addFilter', (listFiler) => {
       this.listFilter = listFiler
     })
+
+    EventBus.$on('addFilter', (listFiler) => {
+      this.listFilter = listFiler
+    })
   },
 
   methods: {
+    searchQuestion () {
+      let data = {
+        limit: 10,
+        offset: 0,
+        search: this.search,
+        categories: [],
+        areas: [
+          // {
+          //   province_id: 1,
+          //   area_id: 1,
+          //   station_id: 1,
+          //   city_id: 1
+          // },
+          // {
+          //   station_id: 1,
+          //   city_id: 2
+          // }
+        ]
+      }
+      let url = URL.SEARCH
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.SEARCH
+      }
+
+      this.loading = true
+      request({
+        url: url,
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          this.loading = false
+          this.questions = res.data.content
+          this.totalPage = res.data.total_length
+          this.limit = res.data.limit
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
     getQuestion (offset) {
       let url = URL.QUESTIONS(offset)
 
@@ -122,6 +173,7 @@ export default {
           this.limit = res.data.limit
         })
         .catch((e) => {
+          this.loading = false
           if (e.response.status === 401) {
             localStorage.setItem('user', null)
             this.$router.push({ path: '/login' })

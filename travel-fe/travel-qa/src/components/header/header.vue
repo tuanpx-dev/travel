@@ -11,7 +11,7 @@
       <img
         v-else
         class="avatar-user"
-        src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+        src="../../assets/avarta.jpg"
         alt=""
         @click="nextToProfile"
       >
@@ -22,7 +22,7 @@
       <img
         v-else
         class="avatar-user"
-        src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+        src="../../assets/avarta.jpg"
         alt=""
         @click="showModalProfile"
       >
@@ -52,7 +52,7 @@
         <img v-if='user.img' :src="user.img" alt="">
         <img
           v-else
-          src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+          src="../../assets/avarta.jpg"
           alt=""
         >
         <p>{{user.username}}</p>
@@ -118,7 +118,7 @@ export default {
     }
 
     if (this.$router.currentRoute.name === 'ProfileUser') {
-      this.isShowAvatar = false
+      this.isShowAvatar = true
     }
   },
 
