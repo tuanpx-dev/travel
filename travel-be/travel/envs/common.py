@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.questions',
     'apps.answers',
     'apps.comments',
+    'apps.area',
 ]
 
 MIDDLEWARE = [

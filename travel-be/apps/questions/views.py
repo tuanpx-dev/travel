@@ -2,10 +2,13 @@ from rest_framework import mixins
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Question, QuestionLikes
+from django.db import transaction
+from django.db.models import Q
+from .models import Question, QuestionLikes, QuestionAreas, QuestionCategories
 from apps.answers.models import Answer
 from apps.category.models import Category
-from .serializers import QuestionSerializer, LikeQuestionSerializer
+from apps.area.models import Province, City, Area, Station
+from .serializers import QuestionSerializer, LikeQuestionSerializer, CreateQuestionSerializer
 from .dto import UserQuestion, UserQuestions
 from apps.answers.dto import UserAnswers
 from apps.answers.serializers import AnswerSerializer
@@ -16,6 +19,61 @@ from travel.pagination.core import DEFAULT_LIMIT, DEFAULT_OFFSET, Paginator
 
 
 # Create your views here.
+class CreateQuestionViewSet(ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = CreateQuestionSerializer
+    authentication_classes = [JwtAuthentication, ]
+    permission_classes = [IsOwnerOrReadOnly, ]
+
+    def _create_question_categories(self, question, category_ids=[]):
+        for category_id in category_ids:
+            category = Category.objects.get(id=category_id)
+            QuestionCategories.objects.create(question=question, category=category)
+
+    def _create_question_areas(self, question, areas=[]):
+        for area_dto in areas:
+            province_id = area_dto.get('province_id', None)
+            province = None
+            if province_id:
+                province = Province.objects.get(id=province_id)
+
+            city_id = area_dto.get('city_id', None)
+            city = None
+            if city_id:
+                city = City.objects.get(id=city_id)
+
+            area_id = area_dto.get('area_id', None)
+            area = None
+            if area_id:
+                area = Area.objects.get(id=area_id)
+
+            station_id = area_dto.get('station_id', None)
+            station = None
+            if station_id:
+                station = Station.objects.get(id=station_id)
+
+            QuestionAreas.objects.create(question=question, province=province, city=city, area=area, station=station)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        validated_data = serializer.validated_data
+        title = validated_data.get('title', None)
+        body = validated_data.get('body', None)
+        categories = validated_data.get('categories', [])
+        areas = validated_data.get('areas', [])
+
+        with transaction.atomic():
+            question = Question.objects.create(user=request.token.user, title=title, body=body)
+            self._create_question_categories(question, category_ids=categories)
+            self._create_question_areas(question, areas=areas)
+            return Response(QuestionSerializer(question).data, status=status.HTTP_201_CREATED)
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class QuestionModelViewSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
@@ -31,8 +89,12 @@ class QuestionModelViewSet(ModelViewSet):
         try:
             limit = int(request.GET.get("limit", DEFAULT_LIMIT))
             offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+            search = request.GET.get("search", None)
         except ValueError:
             return ErrorResponse(message="Parameters invalid")
+
+        if search:
+            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
 
         total_length = self.queryset.count()
         self.queryset = self.queryset.order_by('-created_at')[offset:offset+limit]
@@ -142,8 +204,12 @@ class UserQuestionsViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, Gen
         try:
             limit = int(request.GET.get("limit", DEFAULT_LIMIT))
             offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+            search = request.GET.get("search", None)
         except ValueError:
             return ErrorResponse(message="Parameters invalid")
+
+        if search:
+            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
 
         total_length = self.queryset.count()
         self.queryset = self.queryset.order_by('-created_at')[offset:offset+limit]
