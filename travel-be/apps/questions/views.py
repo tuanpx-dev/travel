@@ -1,6 +1,6 @@
 import logging
 from rest_framework import mixins
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from rest_framework.response import Response
 from django.db import transaction
@@ -77,7 +77,8 @@ class QuestionModelViewSet(ModelViewSet):
             if station_id:
                 station = Station.objects.get(id=station_id)
 
-            QuestionAreas.objects.create(question=question, province=province, city=city, area=area, station=station)
+            if province or city or area or station:
+                QuestionAreas.objects.create(question=question, province=province, city=city, area=area, station=station)
 
     def create(self, request, *args, **kwargs):
         serializer = CreateQuestionSerializer(data=request.data)

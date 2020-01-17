@@ -12,3 +12,8 @@ class Category(models.Model):
 
     class Meta:
         db_table = 'category'
+
+
+class InterestCategory(models.Model):
+    user = models.ForeignKey(User, related_name='interest_categories', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
