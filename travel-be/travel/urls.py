@@ -32,4 +32,5 @@ urlpatterns = [
     path('questions/', include('apps.questions.urls')),
     path('answers/', include('apps.answers.urls')),
     path('comments/', include('apps.comments.urls')),
+    path('area/', include('apps.area.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

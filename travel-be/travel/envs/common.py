@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.questions',
     'apps.answers',
     'apps.comments',
+    'apps.area',
 ]
 
 MIDDLEWARE = [
@@ -180,10 +181,8 @@ LOGGING = {
     }
 }
 
-
 # URL get profile on facebook
 URL_GET_ID_FACEBOOK = "https://graph.facebook.com/me?access_token="
-
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -191,13 +190,13 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Bearer': {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   },
+        }
+    },
 }
 
 # setting path media
