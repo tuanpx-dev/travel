@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryModelViewSet
+from .views import CategoryModelViewSet, InterestCategoryViewSet
 
 snippet_list = {
     'get': 'list',
@@ -15,4 +15,6 @@ snippet_detail = {
 urlpatterns = [
     path('', CategoryModelViewSet.as_view(snippet_list)),
     path('<int:pk>/', CategoryModelViewSet.as_view(snippet_detail)),
+    path('interest/', InterestCategoryViewSet.as_view(snippet_list)),
+    path('interest/<int:pk>/', InterestCategoryViewSet.as_view({'delete': 'destroy'})),
 ]
