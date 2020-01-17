@@ -78,7 +78,7 @@
       </div>
       <div class="action-profile-popup">
         <div @click="nextToProfile">Profile</div>
-        <div>Logout</div>
+        <div @click="logout">Logout</div>
       </div>
     </modal>
   </div>
@@ -108,7 +108,15 @@ export default {
 
   created () {
     this.getCategory()
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
+
     if (this.$router.currentRoute.name === 'ProfileUser') {
       this.isShowAvatar = false
     }
@@ -130,7 +138,7 @@ export default {
     },
 
     backToHome () {
-      this.$router.push({ path: '/' })
+      this.$router.push({ path: '/home' })
     },
 
     closeASK () {
@@ -169,6 +177,11 @@ export default {
             this.$router.push({ path: '/login' })
           }
         })
+    },
+
+    logout () {
+      localStorage.setItem('user', null)
+      this.$router.push({ path: '/login' })
     }
   }
 }

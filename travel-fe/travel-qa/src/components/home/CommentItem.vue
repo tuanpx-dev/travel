@@ -45,7 +45,13 @@ export default {
   },
 
   created () {
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
   },
 
   methods: {
@@ -80,11 +86,15 @@ export default {
     },
 
     actionEdit () {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       this.isEditComment = !this.isEditComment
       this.commentText = this.comment.body
     },
 
     editComment (id) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       if (!this.commentText) return
 
       this.isSendComment = true
@@ -115,6 +125,8 @@ export default {
     },
 
     deleteComment (id) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       request({
         url: URL.DELETE_COMMENT(id),
         method: 'delete'

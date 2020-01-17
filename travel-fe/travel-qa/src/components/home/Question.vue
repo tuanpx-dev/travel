@@ -84,7 +84,7 @@
 
 <script>
 import { EventBus } from '../../eventBus'
-import { URL } from '../../api/URL'
+import { URL, URL_INCOGNITO } from '../../api/URL'
 import request from '../../../request/request'
 import Ask from '../ask/ask'
 import Comment from './Comment'
@@ -111,7 +111,13 @@ export default {
   },
 
   created () {
-    this.user = JSON.parse(localStorage.getItem('user')).data.user
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
 
     if (this.page === 'detail-question' || this.page === 'myAnswer') {
       this.hideAnswer = false
@@ -131,8 +137,16 @@ export default {
     },
 
     getListAnswer () {
+      let url = ''
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.ANSWERS_QUESTION(this.question.id)
+      } else {
+        url = URL.ANSWERS_QUESTION(this.question.id)
+      }
+
       request({
-        url: URL.ANSWERS_QUESTION(this.question.id),
+        url: url,
         method: 'get'
       })
         .then(res => {
@@ -200,6 +214,8 @@ export default {
     },
 
     likeAnswer (answer) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       if (answer.like) return
 
       request({
@@ -237,6 +253,8 @@ export default {
     },
 
     likeQuestion (like) {
+      if (!JSON.parse(localStorage.getItem('user'))) return
+
       if (like) return
 
       const data = {

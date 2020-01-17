@@ -36,7 +36,7 @@ let router = new Router({
       }
     },
     {
-      path: '/',
+      path: '/home',
       name: 'View',
       component: View,
       meta: {
@@ -44,7 +44,7 @@ let router = new Router({
       },
       children: [
         {
-          path: '/',
+          path: '/home',
           name: 'Home',
           component: Home,
           children: [
@@ -53,7 +53,7 @@ let router = new Router({
               name: 'ListQuestion',
               component: ListQuestion,
               meta: {
-                requiresAuth: true
+                requiresAuth: false
               }
             },
             {
@@ -61,7 +61,7 @@ let router = new Router({
               name: 'DetailQuestion',
               component: DetailQuestion,
               meta: {
-                requiresAuth: true
+                requiresAuth: false
               }
             }
           ]
@@ -71,7 +71,7 @@ let router = new Router({
           name: 'Profile',
           component: Profile,
           meta: {
-            requiresAuth: false
+            requiresAuth: true
           },
           children: [
             {
@@ -79,7 +79,7 @@ let router = new Router({
               name: 'ProfileUser',
               component: ProfileUser,
               meta: {
-                requiresAuth: false
+                requiresAuth: true
               }
             },
             {
@@ -87,7 +87,7 @@ let router = new Router({
               name: 'MyQuestion',
               component: MyQuestion,
               meta: {
-                requiresAuth: false
+                requiresAuth: true
               }
             },
             {
@@ -95,7 +95,7 @@ let router = new Router({
               name: 'MyAnswers',
               component: MyAnswers,
               meta: {
-                requiresAuth: false
+                requiresAuth: true
               }
             }
           ]

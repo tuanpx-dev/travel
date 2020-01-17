@@ -63,7 +63,7 @@
 import { EventBus } from '../../eventBus'
 import request from '../../../request/request'
 import Question from './Question'
-import { URL } from '../../api/URL'
+import { URL, URL_INCOGNITO } from '../../api/URL'
 import Paginate from 'vuejs-paginate'
 import Category from '../ask/Filter'
 
@@ -104,9 +104,15 @@ export default {
 
   methods: {
     getQuestion (offset) {
+      let url = URL.QUESTIONS(offset)
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.QUESTIONS(offset)
+      }
+
       this.loading = true
       request({
-        url: URL.QUESTIONS(offset),
+        url: url,
         method: 'get'
       })
         .then(res => {

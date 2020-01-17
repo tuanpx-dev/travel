@@ -31,7 +31,7 @@
 
 <script>
 import request from '../../../request/request'
-import { URL } from '../../api/URL'
+import { URL, URL_INCOGNITO } from '../../api/URL'
 import Question from '../home/Question'
 import { EventBus } from '../../eventBus'
 
@@ -64,8 +64,14 @@ export default {
 
   methods: {
     getDetailQuestion () {
+      let url = URL.DETAIL_QUESTION(this.$route.query.id)
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.DETAIL_QUESTION(this.$route.query.id)
+      }
+
       request({
-        url: URL.DETAIL_QUESTION(this.$route.query.id),
+        url: url,
         method: 'get'
       })
         .then(res => {
@@ -82,9 +88,16 @@ export default {
 
     getListAnswer (id) {
       this.loading = true
+      let url = ''
+
+      if (!JSON.parse(localStorage.getItem('user'))) {
+        url = URL_INCOGNITO.ANSWERS_QUESTION(id)
+      } else {
+        url = URL.ANSWERS_QUESTION(id)
+      }
 
       request({
-        url: URL.ANSWERS_QUESTION(id),
+        url: url,
         method: 'get'
       })
         .then(res => {

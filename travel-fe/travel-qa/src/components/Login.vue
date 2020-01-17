@@ -2,6 +2,10 @@
   <div class="page-login">
     <div class="login container">
       <h1>TravelQA</h1>
+      <p>message</p>
+      <div>
+        <button class="use-without-login" @click="loginNotAccount">Use without login</button>
+      </div>
       <div>
         <p
           class="login-title"
@@ -10,7 +14,7 @@
           <div class="col-md-6 col-xs-12">
             <div class="login-with-fa">
               <p>
-                <i class="fa fa-facebook-square"></i>
+                <i class="fab fa-facebook"></i>
               </p>
               <p @click="loginFacebook">Login with facebook</p>
             </div>
@@ -42,6 +46,15 @@
               <button class="action-login" @click="sendEmailResetPassWord()" @keyup.enter="actionLogin()">Reset</button>
             </div>
           </div>
+
+          <div class="login-new-account-mobile">
+              If tou are not a user,
+              <a @click="showPopup">New Registration></a> By regisering as a new user, you are agreeing to the TravelQA's
+              <a
+                href=""
+              >Term of Service</a> and
+              <a href="">Privacy Policy</a>
+            </div>
         </div>
       </div>
     </div>
@@ -73,13 +86,17 @@ export default {
 
   created () {
     if (localStorage.getItem('user')) {
-      this.$router.push({ path: '/' })
+      // this.$router.push({ path: '/home' })
     } else {
       localStorage.setItem('user', null)
     }
   },
 
   methods: {
+    loginNotAccount () {
+      this.$router.push({ path: '/home' })
+    },
+
     loginFacebook () {
       let self = this
       FB.login(function (response) {
@@ -96,7 +113,7 @@ export default {
             })
               .then(res => {
                 localStorage.setItem('user', JSON.stringify(res))
-                self.$router.push({ path: '/' })
+                self.$router.push({ path: '/home' })
               })
               .catch((e) => {
                 if (e.response) {
@@ -133,7 +150,7 @@ export default {
       })
         .then(res => {
           localStorage.setItem('user', JSON.stringify(res))
-          this.$router.push({ path: '/' })
+          this.$router.push({ path: '/home' })
         })
         .catch((e) => {
           if (e.response) {
@@ -272,6 +289,20 @@ export default {
   color: red;
 }
 
+.use-without-login {
+  background-color: #4267B2;
+  border: 1px solid #4267B2;
+  color: white;
+  padding: 5px 20px;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 15px;
+}
+
+.login-new-account-mobile {
+  display: none;
+}
+
 @media only screen and (max-width: 600px) {
   .page-login {
     background-color: white;
@@ -284,6 +315,7 @@ export default {
 
   .login h1 {
     font-size: 50px;
+    color: #2761E6;
   }
 
   .login-title {
@@ -299,6 +331,7 @@ export default {
 
   .login-new-account {
     font-size: 16px;
+    display: none;
   }
 
   .login-form {
@@ -313,12 +346,27 @@ export default {
     height: 35px;
   }
 
-  .fa-facebook-square {
+  .fa-facebook {
     font-size: 24px;
   }
 
   .login-form {
     border: none;
+  }
+
+  .use-without-login{
+    border: 1px solid #2760E6;
+    background-color: #2760E6;
+  }
+
+  .login-new-account-mobile {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+    font-size: 16px;
+    color: gray;
+    font-weight: 400;
+    padding: 0 15px;
   }
 }
 
