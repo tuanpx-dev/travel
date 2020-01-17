@@ -28,12 +28,12 @@ class QuestionLikes(models.Model):
 
 class QuestionCategories(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='categories')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
 
 
 class QuestionAreas(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='areas')
-    province = models.ForeignKey(Province, on_delete=models.CASCADE)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-    area = models.ForeignKey(Area, on_delete=models.CASCADE)
-    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    province = models.ForeignKey(Province, null=True, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, null=True, on_delete=models.CASCADE)
+    area = models.ForeignKey(Area, null=True, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, null=True, on_delete=models.CASCADE)

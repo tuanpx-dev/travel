@@ -41,6 +41,14 @@ class CreateQuestionSerializer(serializers.Serializer):
     areas = serializers.ListField(child=QuestionAreaSerializer(), allow_empty=True, default=[])
 
 
+class SearchQuestionSerializer(serializers.Serializer):
+    limit = serializers.IntegerField(required=False, default=20)
+    offset = serializers.IntegerField(required=False, default=0)
+    search = serializers.CharField(required=False)
+    categories = serializers.ListField(child=serializers.IntegerField(min_value=0), allow_empty=True, default=[])
+    areas = serializers.ListField(child=QuestionAreaSerializer(), allow_empty=True, default=[])
+
+
 class LazyQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
