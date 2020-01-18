@@ -50,6 +50,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.display_name = validated_data.get('display_name', instance.display_name)
+        instance.place = validated_data.get('place', instance.place)
         instance.email = validated_data.get('email', instance.email)
         instance.age = validated_data.get('age', instance.age)
         instance.avatar = validated_data.get('avatar', instance.avatar)
