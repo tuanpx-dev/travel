@@ -7,13 +7,18 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework import mixins
 from django.conf import settings
-
+from django.db.models import Q
 from apps.users import serializers as user_sers
 from apps.users.models import User
+from apps.questions.models import Question
+from apps.answers.models import Answer
+from apps.questions.dto import UserQuestions
+from apps.answers.dto import UserAnswers
 from apps.users.utils import get_facebook_profile
 from travel.auth.token import create_token, decode_token
 from travel.auth.core import JwtAuthentication
 from travel.errors.common import ErrorResponse
+from travel.pagination.core import DEFAULT_LIMIT, DEFAULT_OFFSET, Paginator
 
 _logger = logging.getLogger(__name__)
 
@@ -134,3 +139,55 @@ class ChangePasswordViewSet(mixins.UpdateModelMixin, GenericViewSet):
         user.set_password(new_password)
         user.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class UserQuestionsViewSet(mixins.ListModelMixin, GenericViewSet):
+    authentication_classes = [JwtAuthentication, ]
+
+    def list(self, request, *args, **kwargs):
+        user = request.token.user
+
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+            search = request.GET.get("search", None)
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        queryset = Question.objects.filter(user=user)
+
+        if search:
+            queryset = queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
+
+        total_length = queryset.count()
+        queryset = queryset.order_by('-created_at')[offset:offset + limit]
+        data = UserQuestions(request.token.user, list(queryset)).data()
+
+        page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
+
+
+class UserAnswersViewSet(mixins.ListModelMixin, GenericViewSet):
+    authentication_classes = [JwtAuthentication, ]
+
+    def list(self, request, *args, **kwargs):
+        user = request.token.user
+
+        try:
+            limit = int(request.GET.get("limit", DEFAULT_LIMIT))
+            offset = int(request.GET.get("offset", DEFAULT_OFFSET))
+            search = request.GET.get("search", None)
+        except ValueError:
+            return ErrorResponse(message="Parameters invalid")
+
+        queryset = Answer.objects.filter(user=user)
+
+        if search:
+            queryset = queryset.filter(body__icontains=search)
+
+        total_length = queryset.count()
+        queryset = queryset.order_by('-created_at')[offset:offset + limit]
+        data = UserAnswers(request.token.user, list(queryset)).data()
+
+        page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
+        return Response(page.data, status=status.HTTP_200_OK)
