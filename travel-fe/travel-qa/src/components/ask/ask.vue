@@ -22,7 +22,12 @@
         </div>
       </div>
 
-      <Category v-if="isShowFilter" class="ask-title"/>
+      <Category
+        v-if="isShowFilter"
+        class="ask-title"
+        :filter="filterQuestion"
+        @addArea="addArea"
+        />
 
       <div class="ask-title">
         <input type="text" placeholder="Enter the title of the question here" v-model="titleQuestion">
@@ -59,6 +64,7 @@ export default {
       detailQuestion: '',
       user: {},
       isShowFilter: false,
+      filterQuestion: {},
       category_id: [],
       areas: []
     }
@@ -67,21 +73,11 @@ export default {
   updated () {
     EventBus.$on('addCategory', (category) => {
       this.category_id = category
-      console.log(this.category_id)
-    })
-
-    EventBus.$on('addArea', (areas) => {
-      this.areas = areas
-      console.log(this.areas)
     })
   },
 
   created () {
     this.$modal.show(this.name)
-    if (this.question) {
-      this.titleQuestion = this.question.title
-      this.detailQuestion = this.question.body
-    }
 
     if (!JSON.parse(localStorage.getItem('user'))) {
       this.user = {
@@ -90,9 +86,25 @@ export default {
     } else {
       this.user = JSON.parse(localStorage.getItem('user')).data.user
     }
+
+    if (this.question) {
+      this.titleQuestion = this.question.title
+      this.detailQuestion = this.question.body
+      this.isShowFilter = true
+      this.filterQuestion = {
+        areas: this.question.areas,
+        categoies: this.question.categoies
+      }
+      // this.areas = this.question.areas
+      // this.category_id = this.question.categoies
+    }
   },
 
   methods: {
+    addArea (areas) {
+      this.areas = [...areas]
+    },
+
     createASK () {
       if (!this.titleQuestion || !this.detailQuestion) return
 

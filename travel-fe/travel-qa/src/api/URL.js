@@ -37,7 +37,9 @@ export const URL = {
 
   // profile
   EDIR_USER: `/user/profile/`,
-  EDIT_PASS: `/user/change-password/`
+  EDIT_PASS: `/user/change-password/`,
+  MY_QUESTION: (offset) => `user/questions/?limit=10&offset=${offset}`,
+  MY_ANSWER: (offset) => `user/answers/?limit=10&offset=${offset}`
 }
 
 export const URL_INCOGNITO = {
