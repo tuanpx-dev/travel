@@ -7,11 +7,11 @@
         <p>search</p>
       </div>
     </div>
-    <div class="home-menu">
+    <!-- <div class="home-menu">
       <button class="home-menu-page arrow_box">Popular</button>
       <button class="home-menu-page new">New ></button>
       <button class="home-menu-page new">Relation ></button>
-    </div>
+    </div> -->
     <div v-if="!loading" >
       <div class="home-list">
         <Question :question="questionDetail" :page="'detail-question'"/>
@@ -173,6 +173,10 @@ export default {
 
   .search {
     display: flex;
+  }
+
+  .home-list {
+    margin-top: -25px;
   }
 
   .home-menu-page {

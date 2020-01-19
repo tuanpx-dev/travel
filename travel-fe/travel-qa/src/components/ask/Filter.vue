@@ -57,7 +57,7 @@ import { EventBus } from '../../eventBus'
 
 export default {
   name: 'Filter',
-  props: ['showborder'],
+  props: ['showborder', 'filter'],
   data () {
     return {
       categorys: [],
@@ -75,19 +75,50 @@ export default {
       listFilter: [],
       listCategory: [],
 
-      listProvince: [],
-      listCity: [],
-      listArea: [],
-      listStation: []
+      listProvince: []
     }
   },
 
   created () {
     this.getListCategory()
     this.getListProvince()
+    if (this.filter) {
+      this.getListFilter()
+    }
   },
 
   methods: {
+    getListFilter () {
+      this.areas = this.filter.areas.map((el, index) => {
+        return {
+          province_id: el.province.id,
+          city_id: el.city.id,
+          area_id: el.area.id,
+          station_id: el.station.id,
+
+          listCity: [],
+          listArea: [],
+          listStation: []
+        }
+      })
+
+      this.areas = this.filter.areas.map((el, index) => {
+        this.filterCity(index)
+        this.filterArea(index)
+        this.filterStation(index)
+        return {
+          province_id: el.province.id,
+          city_id: el.city.id,
+          area_id: el.area.id,
+          station_id: el.station.id,
+
+          listCity: [],
+          listArea: [],
+          listStation: []
+        }
+      })
+    },
+
     getListCategory () {
       request({
         url: URL.CATEGORY,
@@ -148,14 +179,28 @@ export default {
     },
 
     handleArea (key, area, index) {
-      if (key === 'province') this.filterCity(index)
-      if (key === 'city') this.filterArea(index)
-      if (key === 'area') this.filterStation(index)
+      if (key === 'province') {
+        this.filterCity(index)
+        this.areas[index].city_id = ''
+        this.areas[index].area_id = ''
+        this.areas[index].station_id = ''
+      }
+
+      if (key === 'city') {
+        this.filterArea(index)
+        this.filterStation(index)
+        this.areas[index].area_id = ''
+        this.areas[index].station_id = ''
+      }
+
+      if (key === 'area') {}
+
       if (key === 'station') {}
 
       let listArea = this.areas.map(el => `${el.province_id} > ${el.station_id}`)
+
       EventBus.$emit('addFilter', this.listFilter.concat(listArea))
-      EventBus.$emit('addArea', this.areas)
+      this.$emit('addArea', this.areas)
     },
 
     filterCity (index) {

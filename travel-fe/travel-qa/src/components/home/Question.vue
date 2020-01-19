@@ -100,7 +100,7 @@
       :name="'edit-question'"
       @closeASK="closeASK"
       :question="question"
-      :width="'90%'"
+      :width="'60%'"
     />
   </div>
 </template>

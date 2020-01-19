@@ -19,7 +19,7 @@
         <div>
           <div class="change-review-desktop">
             <p class="change-title title-section">Residence</p>
-            <p v-if="!isEditName" class="change-value title-section">{{user.username}}</p>
+            <p v-if="!isEditName" class="change-value title-section">{{user.place}}</p>
             <input v-else type="text" v-model="username" class="input-edit"/>
             <p class="icon-edit-review title-section">
               <i v-if="!isEditName" class="fa fa-pen" style="color: #2761E6" @click="edit('name')"></i>
@@ -108,7 +108,7 @@ export default {
       switch (edit) {
         case 'name':
           this.isEditName = true
-          this.username = this.user.username
+          this.username = this.user.place
           // this.editProfile(edit)
           break
         case 'age':

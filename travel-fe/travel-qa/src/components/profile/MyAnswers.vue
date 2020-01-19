@@ -43,7 +43,7 @@ export default {
     }
 
     request({
-      url: URL.QUESTIONS(0),
+      url: URL.MY_ANSWER(0),
       method: 'get'
     })
       .then(res => {

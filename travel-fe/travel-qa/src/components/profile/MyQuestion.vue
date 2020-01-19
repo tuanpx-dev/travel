@@ -42,7 +42,7 @@ export default {
       this.user = JSON.parse(localStorage.getItem('user')).data.user
     }
     request({
-      url: URL.QUESTIONS(0),
+      url: URL.MY_QUESTION(0),
       method: 'get'
     })
       .then(res => {
