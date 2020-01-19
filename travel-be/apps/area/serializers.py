@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Province, City, Area, Station, InterestArea
+from .models import Province, City, Area, Station
 
 
 class ProvinceSerializer(serializers.ModelSerializer):
@@ -31,14 +31,3 @@ class CreateInterestAreaSerializer(serializers.Serializer):
     city_id = serializers.IntegerField(required=False, min_value=0)
     area_id = serializers.IntegerField(required=False, min_value=0)
     station_id = serializers.IntegerField(required=False, min_value=0)
-
-
-class InterestAreaSerializer(serializers.ModelSerializer):
-    province = ProvinceSerializer()
-    city = CitySerializer()
-    area = AreaSerializer()
-    station = StationSerializer()
-
-    class Meta:
-        model = InterestArea
-        fields = '__all__'

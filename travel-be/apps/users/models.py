@@ -26,9 +26,3 @@ class User(AbstractUser):
 
     class Meta:
         db_table = 'user'
-
-
-class Interest(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
-    name = models.TextField(blank=True, null=True)
-    value = models.TextField(blank=True, null=True)

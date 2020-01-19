@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.answers',
     'apps.comments',
     'apps.area',
+    'apps.interests',
 ]
 
 MIDDLEWARE = [
