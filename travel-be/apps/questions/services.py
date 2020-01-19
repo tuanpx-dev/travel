@@ -11,6 +11,9 @@ def _search_by_categories(query_set, categories):
     return query_set
 
 def _search_by_areas(query_set, areas):
+    if not areas:
+        return query_set
+
     queries = []
     for area in areas:
         province_id = area.get('province_id', None)
@@ -62,10 +65,12 @@ def _search_by_condition(query_set, conditions):
     :return:
     '''
     categories = conditions['categories']
-    query_set = _search_by_categories(query_set, categories)
+    if categories:
+        query_set = _search_by_categories(query_set, categories)
 
     areas = conditions['areas']
-    query_set = _search_by_areas(query_set, areas)
+    if areas:
+        query_set = _search_by_areas(query_set, areas)
     return query_set
 
 def search_questions(query_set, limit, offset, search_text, search_condition, sort_type, distinct=False):
