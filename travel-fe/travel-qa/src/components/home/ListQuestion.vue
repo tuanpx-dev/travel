@@ -110,6 +110,10 @@ export default {
 
   methods: {
     searchQuestion () {
+      if (!this.search) {
+        this.getQuestion(0)
+        return
+      }
       let data = {
         limit: 10,
         offset: 0,
