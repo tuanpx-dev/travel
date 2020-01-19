@@ -250,7 +250,7 @@ class SearchQuestionViewSet(mixins.CreateModelMixin, GenericViewSet):
         validated_data = serializer.validated_data
         limit = validated_data.get('limit')
         offset = validated_data.get('offset')
-        search = validated_data.get('offset', None)
+        search = validated_data.get('search', None)
         categories = validated_data.get('categories', [])
         areas = validated_data.get('areas', [])
         type = validated_data.get('type')
@@ -312,7 +312,7 @@ class UserSearchQuestionViewSet(mixins.CreateModelMixin, GenericViewSet):
         validated_data = serializer.validated_data
         limit = validated_data.get('limit')
         offset = validated_data.get('offset')
-        search = validated_data.get('offset', None)
+        search = validated_data.get('search', None)
         categories = validated_data.get('categories', [])
         areas = validated_data.get('areas', [])
         type = validated_data.get('type')
