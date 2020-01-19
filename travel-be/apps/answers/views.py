@@ -2,7 +2,7 @@ from rest_framework import mixins
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from rest_framework.response import Response
-from apps.questions.models import Question
+from apps.questions.models import Question, ANSWER_TYPE, LIKE_ANSWER_TYPE
 from .models import Answer, AnswerLikes
 from apps.comments.models import Comment
 from .serializers import AnswerSerializer, LikeAnswerSerializer
@@ -51,7 +51,18 @@ class AnswerModelViewSet(ModelViewSet):
         except Question.DoesNotExist:
             return ErrorResponse(message="Question does not exist")
         answer = Answer.objects.create(user=request.token.user, question=question, **validated_data)
+
+        question.add_point(ANSWER_TYPE)
+        question.save()
+
         return Response(AnswerSerializer(answer).data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        question = instance.question
+        instance.delete()
+        question.subtract_point(ANSWER_TYPE)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FetchCommentsViewSet(ModelViewSet):
@@ -97,12 +108,20 @@ class LikeAnswerViewSet(ModelViewSet):
             like_answer.delete()
             answer.total_likes -= 1
             answer.save()
+
+            question = answer.question
+            question.subtract_point(LIKE_ANSWER_TYPE)
+
             return Response(status=status.HTTP_204_NO_CONTENT)
         except AnswerLikes.DoesNotExist:
             # if not like this answer then like
             AnswerLikes.objects.create(user=request.token.user, answer=answer)
             answer.total_likes += 1
             answer.save()
+
+            question = answer.question
+            question.add_point(LIKE_ANSWER_TYPE)
+
             return Response(status=status.HTTP_201_CREATED)
 
 

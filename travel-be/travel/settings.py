@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.answers',
     'apps.comments',
     'apps.area',
+    'apps.interests',
 ]
 
 MIDDLEWARE = [
@@ -209,6 +210,10 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+SEARCH_POPULAR_TYPE = '1'
+SEARCH_NEW_TYPE = '2'
+SEARCH_RELATION_TYPE = '3'
 
 # setting path media
 STATIC_URL = '/files/'

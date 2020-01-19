@@ -5,12 +5,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.db import transaction
 from django.db.models import Q
-from .models import Question, QuestionLikes, QuestionAreas, QuestionCategories
+from django.conf import settings
+from .models import Question, QuestionLikes, QuestionAreas, QuestionCategories, LIKE_QUESTION_TYPE
 from apps.answers.models import Answer
 from apps.category.models import Category
 from apps.area.models import Province, City, Area, Station
 from .serializers import QuestionSerializer, LikeQuestionSerializer, CreateQuestionSerializer, SearchQuestionSerializer
 from .dto import UserQuestion, UserQuestions
+from .services import search_questions
 from apps.answers.dto import UserAnswers
 from apps.answers.serializers import AnswerSerializer
 from travel.auth.core import JwtAuthentication
@@ -18,9 +20,9 @@ from travel.permissions.core import IsOwnerOrReadOnly
 from travel.errors.common import ErrorResponse
 from travel.pagination.core import DEFAULT_LIMIT, DEFAULT_OFFSET, Paginator
 
-
 # Create your views here
 _logger = logging.getLogger(__name__)
+
 
 class QuestionModelViewSet(ModelViewSet):
     queryset = Question.objects.all()
@@ -38,14 +40,12 @@ class QuestionModelViewSet(ModelViewSet):
             limit = int(request.GET.get("limit", DEFAULT_LIMIT))
             offset = int(request.GET.get("offset", DEFAULT_OFFSET))
             search = request.GET.get("search", None)
+            type = request.GET.get("type", settings.SEARCH_NEW_TYPE)
         except ValueError:
             return ErrorResponse(message="Parameters invalid")
 
-        if search:
-            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
+        self.queryset, total_length = search_questions(self.queryset, limit, offset, search, None, type)
 
-        total_length = self.queryset.count()
-        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
         serializers = QuestionSerializer(self.queryset, many=True)
         page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)
@@ -78,7 +78,8 @@ class QuestionModelViewSet(ModelViewSet):
                 station = Station.objects.get(id=station_id)
 
             if province or city or area or station:
-                QuestionAreas.objects.create(question=question, province=province, city=city, area=area, station=station)
+                QuestionAreas.objects.create(question=question, province=province, city=city, area=area,
+                                             station=station)
 
     def create(self, request, *args, **kwargs):
         serializer = CreateQuestionSerializer(data=request.data)
@@ -164,12 +165,14 @@ class LikeQuestionViewSet(ModelViewSet):
             like_question = QuestionLikes.objects.get(user=request.token.user, question=question)
             like_question.delete()
             question.total_likes -= 1
+            question.subtract_point(LIKE_QUESTION_TYPE)
             question.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except QuestionLikes.DoesNotExist:
             # if not like this question then like
             QuestionLikes.objects.create(user=request.token.user, question=question)
             question.total_likes += 1
+            question.add_point(LIKE_QUESTION_TYPE)
             question.save()
             return Response(status=status.HTTP_201_CREATED)
 
@@ -188,16 +191,12 @@ class UserQuestionsViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, Gen
             limit = int(request.GET.get("limit", DEFAULT_LIMIT))
             offset = int(request.GET.get("offset", DEFAULT_OFFSET))
             search = request.GET.get("search", None)
+            sort_type = request.GET.get("type", settings.SEARCH_NEW_TYPE)
         except ValueError:
             return ErrorResponse(message="Parameters invalid")
 
-        if search:
-            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
-
-        total_length = self.queryset.count()
-        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
+        self.queryset, total_length = search_questions(self.queryset, limit, offset, search, None, sort_type)
         data = UserQuestions(request.token.user, list(self.queryset)).data()
-
         page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)
 
@@ -254,20 +253,11 @@ class SearchQuestionViewSet(mixins.CreateModelMixin, GenericViewSet):
         search = validated_data.get('offset', None)
         categories = validated_data.get('categories', [])
         areas = validated_data.get('areas', [])
+        type = validated_data.get('type')
 
-        if search:
-            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
+        self.queryset, total_length = search_questions(self.queryset, limit, offset, search,
+                                         {'categories': categories, 'areas': areas}, type, distinct=True)
 
-        if categories:
-            self._search_by_categories(categories)
-
-        if areas:
-            self._search_by_areas(areas)
-
-        self.queryset = self.queryset.distinct()
-
-        total_length = self.queryset.count()
-        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
         serializers = QuestionSerializer(self.queryset, many=True)
         page = Paginator(content=serializers.data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)
@@ -325,20 +315,11 @@ class UserSearchQuestionViewSet(mixins.CreateModelMixin, GenericViewSet):
         search = validated_data.get('offset', None)
         categories = validated_data.get('categories', [])
         areas = validated_data.get('areas', [])
+        type = validated_data.get('type')
 
-        if search:
-            self.queryset = self.queryset.filter(Q(title__icontains=search) | Q(body__icontains=search))
+        self.queryset, total_length = search_questions(self.queryset, limit, offset, search,
+                                                       {'categories': categories, 'areas': areas}, type, distinct=True)
 
-        if categories:
-            self._search_by_categories(categories)
-
-        if areas:
-            self._search_by_areas(areas)
-
-        self.queryset = self.queryset.distinct()
-
-        total_length = self.queryset.count()
-        self.queryset = self.queryset.order_by('-created_at')[offset:offset + limit]
         data = UserQuestions(request.token.user, list(self.queryset)).data()
         page = Paginator(content=data, limit=limit, offset=offset, total_length=total_length)
         return Response(page.data, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, InterestCategory
+from .models import Category
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,11 +17,3 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CreateInterestCategorySerializer(serializers.Serializer):
     category_id = serializers.IntegerField(required=True, min_value=0)
-
-
-class InterestCategorySerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-
-    class Meta:
-        model = InterestCategory
-        fields = '__all__'

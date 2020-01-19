@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.conf import settings
 from .models import Question, QuestionLikes, QuestionAreas, QuestionCategories
 from apps.users.serializers import UserSerializer
 from apps.answers.models import Answer
@@ -9,8 +10,8 @@ from apps.category.serializers import CategorySerializer
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ['id', 'title', 'body', 'total_likes', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'total_likes', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'body', 'total_likes', 'point', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'total_likes', 'point', 'created_at', 'updated_at']
         
     def to_representation(self, instance):
         ret = super(QuestionSerializer, self).to_representation(instance)
@@ -47,6 +48,7 @@ class SearchQuestionSerializer(serializers.Serializer):
     search = serializers.CharField(required=False)
     categories = serializers.ListField(child=serializers.IntegerField(min_value=0), allow_empty=True, default=[])
     areas = serializers.ListField(child=QuestionAreaSerializer(), allow_empty=True, default=[])
+    type = serializers.CharField(required=False, default=settings.SEARCH_NEW_TYPE)
 
 
 class LazyQuestionSerializer(serializers.ModelSerializer):
