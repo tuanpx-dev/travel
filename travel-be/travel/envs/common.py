@@ -200,6 +200,10 @@ SWAGGER_SETTINGS = {
     },
 }
 
+SEARCH_POPULAR_TYPE = '1'
+SEARCH_NEW_TYPE = '2'
+SEARCH_RELATION_TYPE = '3'
+
 # setting path media
 STATIC_URL = '/files/'
 MEDIA_URL = '/static/'
