@@ -232,6 +232,7 @@ export default {
   height: 50px;
   border-radius: 50%;
   float: right;
+  border: 1px solid #ccc;
 }
 
 /* add ask */

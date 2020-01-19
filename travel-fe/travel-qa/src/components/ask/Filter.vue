@@ -16,20 +16,24 @@
         <p class="filter-title">Area</p>
 
         <div v-for="(area, index) in areas" :key="index" class="list-option">
-          <select  v-model="area.start" @change="handleArea()">
-            <option value="">--- Select ---</option>
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
+          <select  v-model="area.province_id" @change="handleArea('province', area, index)">
+            <option value="">Select province</option>
+            <option v-for="item in listProvince" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
 
-          <select v-model="area.end" @change="handleArea()">
-            <option value="">--- Select ---</option>
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
+          <select v-model="area.area_id" @change="handleArea('area', area, index)" :disabled="area.listArea.length < 1">
+            <option value="">Select area</option>
+            <option v-for="item in area.listArea" :key="item.id" :value="item.id">{{ item.name }}</option>
+          </select>
+
+          <select v-model="area.city_id" @change="handleArea('city', area, index)" :disabled="area.listCity.length < 1">
+            <option value="">Select city</option>
+            <option v-for="item in area.listCity" :key="item.id" :value="item.id">{{ item.name }}</option>
+          </select>
+
+          <select v-model="area.station_id" @change="handleArea('station', area, index)" :disabled="area.listStation.length < 1">
+            <option value="">Select station</option>
+            <option v-for="item in area.listStation" :key="item.id" :value="item.id">{{ item.name }}</option>
           </select>
         </div>
 
@@ -57,17 +61,30 @@ export default {
   data () {
     return {
       categorys: [],
-      areas: [{ start: '', end: '' }],
+      areas: [{
+        province_id: '',
+        city_id: '',
+        area_id: '',
+        station_id: '',
+
+        listCity: [],
+        listArea: [],
+        listStation: []
+      }],
       loading: true,
       listFilter: [],
       listCategory: [],
-      listArea: []
+
+      listProvince: [],
+      listCity: [],
+      listArea: [],
+      listStation: []
     }
   },
 
   created () {
     this.getListCategory()
-    this.getListArea()
+    this.getListProvince()
   },
 
   methods: {
@@ -88,13 +105,13 @@ export default {
         })
     },
 
-    getListArea () {
+    getListProvince () {
       request({
-        url: URL.AREA,
+        url: URL.PROVINCE,
         method: 'get'
       })
         .then(res => {
-          this.areas = res.data
+          this.listProvince = res.data
         })
         .catch((e) => {
           if (e.response.status === 401) {
@@ -106,8 +123,14 @@ export default {
 
     addArea () {
       this.areas.push({
-        start: '',
-        end: ''
+        province_id: '',
+        city_id: '',
+        area_id: '',
+        station_id: '',
+
+        listCity: [],
+        listArea: [],
+        listStation: []
       })
     },
 
@@ -124,10 +147,66 @@ export default {
       EventBus.$emit('addCategory', this.listCategory)
     },
 
-    handleArea () {
-      let listArea = this.areas.map(el => `${el.start} > ${el.end}`)
+    handleArea (key, area, index) {
+      if (key === 'province') this.filterCity(index)
+      if (key === 'city') this.filterArea(index)
+      if (key === 'area') this.filterStation(index)
+      if (key === 'station') {}
+
+      let listArea = this.areas.map(el => `${el.province_id} > ${el.station_id}`)
       EventBus.$emit('addFilter', this.listFilter.concat(listArea))
       EventBus.$emit('addArea', this.areas)
+    },
+
+    filterCity (index) {
+      let provinceId = this.areas[index].province_id
+      request({
+        url: URL.CITY(provinceId),
+        method: 'get'
+      })
+        .then(res => {
+          this.areas[index].listCity = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    filterArea (index) {
+      let cityId = this.areas[index].city_id
+      request({
+        url: URL.AREA(cityId),
+        method: 'get'
+      })
+        .then(res => {
+          this.areas[index].listArea = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    filterStation (index) {
+      let cityId = this.areas[index].city_id
+      request({
+        url: URL.STATION(cityId),
+        method: 'get'
+      })
+        .then(res => {
+          this.areas[index].listStation = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
     }
   }
 }
@@ -160,7 +239,10 @@ export default {
 }
 
 .list-option {
-  margin-left: 10px
+  margin-left: 10px;
+  border-bottom: 1px solid #CBE0FF;
+  margin-bottom: 3px;
+  margin-top: 10px;
 }
 
 .list-option select {

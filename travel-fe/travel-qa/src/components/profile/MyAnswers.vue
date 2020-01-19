@@ -2,7 +2,7 @@
   <div class="my-question col-md-9">
     <div class="avartar-name mobile-profile">
       <img
-        src="https://scontent.fhan2-4.fna.fbcdn.net/v/l/t1.0-9/79718560_558443374887450_3199243511551492096_n.jpg?_nc_cat=100&_nc_ohc=wwxTklQV7QgAQkI9nPX_W92osAYeK6NMO3Sk0yYTImrPEDpKoETFGrQQg&_nc_ht=scontent.fhan2-4.fna&oh=4484df51e86cb97abeb83d0f70910f0e&oe=5E781D35"
+        :src="user.avatar"
         alt
       />
       <p>name</p>
@@ -28,11 +28,20 @@ export default {
   data () {
     return {
       loading: false,
-      questions: []
+      questions: [],
+      user: {}
     }
   },
 
   created () {
+    if (!JSON.parse(localStorage.getItem('user'))) {
+      this.user = {
+        id: ''
+      }
+    } else {
+      this.user = JSON.parse(localStorage.getItem('user')).data.user
+    }
+
     request({
       url: URL.QUESTIONS(0),
       method: 'get'
@@ -58,6 +67,7 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 1px solid #ccc;
 }
 
 .avartar-name p {

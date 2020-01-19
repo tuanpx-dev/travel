@@ -17,7 +17,10 @@ export const URL = {
 
   // category
   CATEGORY: '/category/',
-  AREA: '/area/',
+  PROVINCE: '/area/provinces/',
+  CITY: (provinceId) => `/area/citys/?province_id=${provinceId}`,
+  AREA: (cityId) => `/area/areas/?city_id=${cityId}`,
+  STATION: (cityId) => `/area/stations/?city_id=${cityId}`,
 
   // answers
   ANSWERS_QUESTION: (answerId) => `/questions/auth-required-questions/${answerId}/answers/`,

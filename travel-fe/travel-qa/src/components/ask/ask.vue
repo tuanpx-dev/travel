@@ -90,7 +90,6 @@ export default {
     } else {
       this.user = JSON.parse(localStorage.getItem('user')).data.user
     }
-
   },
 
   methods: {
@@ -108,7 +107,8 @@ export default {
       const data = {
         title: this.titleQuestion,
         body: this.detailQuestion,
-        category_id: 1
+        categories: this.category_id,
+        areas: this.areas
       }
 
       request({
