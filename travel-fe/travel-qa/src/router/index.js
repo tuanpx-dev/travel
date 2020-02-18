@@ -10,6 +10,9 @@ import ProfileUser from '../components/profile/ProfileUser'
 import MyQuestion from '../components/profile/MyQuestion'
 import MyAnswers from '../components/profile/MyAnswers'
 import View from '../components/View'
+import NewRegiste from '../components/newRegiste/NewRegiste'
+import AboutUs from '../components/aboutUs/AboutUs'
+import PrivacyPolicy from '../components/privacyPolicy/PrivacyPolicy'
 
 Vue.use(Router)
 
@@ -31,6 +34,14 @@ let router = new Router({
       path: '/resetpassword',
       name: 'ResetPassWord',
       component: ResetPassWord,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/newregiste',
+      name: 'NewRegiste',
+      component: NewRegiste,
       meta: {
         requiresAuth: false
       }
@@ -99,6 +110,22 @@ let router = new Router({
               }
             }
           ]
+        },
+        {
+          path: '/aboutus',
+          name: 'AboutUs',
+          component: AboutUs,
+          meta: {
+            requiresAuth: false
+          }
+        },
+        {
+          path: '/privacypolicy',
+          name: 'PrivacyPolicy',
+          component: PrivacyPolicy,
+          meta: {
+            requiresAuth: false
+          }
         }
       ]
     }
