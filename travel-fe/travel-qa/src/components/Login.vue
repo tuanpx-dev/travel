@@ -20,7 +20,7 @@
             </div>
             <div class="login-new-account">
               If tou are not a user,
-              <a @click="showPopup">New Registration></a> By regisering as a new user, you are agreeing to the TravelQA's
+              <a @click="handleNewRegistration()">New Registration></a> By regisering as a new user, you are agreeing to the TravelQA's
               <a
                 href=""
               >Term of Service</a> and
@@ -93,6 +93,10 @@ export default {
   },
 
   methods: {
+    handleNewRegistration () {
+      this.$router.push({ path: '/newregiste' })
+    },
+
     loginNotAccount () {
       this.$router.push({ path: '/home' })
     },
