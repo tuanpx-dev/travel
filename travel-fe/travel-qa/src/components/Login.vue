@@ -2,6 +2,10 @@
   <div class="page-login">
     <div class="login container">
       <h1>TravelQA</h1>
+      <p>message</p>
+      <div>
+        <button class="use-without-login" @click="loginNotAccount">Use without login</button>
+      </div>
       <div>
         <p
           class="login-title"
@@ -10,9 +14,9 @@
           <div class="col-md-6 col-xs-12">
             <div class="login-with-fa">
               <p>
-                <i class="fa fa-facebook-square"></i>
+                <i class="fab fa-facebook"></i>
               </p>
-              <p>Login with facebook</p>
+              <p @click="loginFacebook">Login with facebook</p>
             </div>
             <div class="login-new-account">
               If tou are not a user,
@@ -23,15 +27,34 @@
               <a href="">Privacy Policy</a>
             </div>
           </div>
-          <div class="login-form col-md-6 col-xs-12">
+          <div class="login-form col-md-6 col-xs-12" v-if="!resetPassWord">
             <p class="login-text">Login</p>
             <input type="text" placeholder="Email" v-model="email" class="login-value" />
-            <input type="text" placeholder="Password" v-model="password" class="login-value" />
+            <input type="password" placeholder="Password" v-model="password" class="login-value" />
+            <p v-if="error" class="error-mes">{{ error }}</p>
             <div class="action-login-resset">
-              <button class="resset-password">Password Reset</button>
+              <button class="resset-password" @click="resetPassWord = true">Password Reset</button>
               <button class="action-login" @click="actionLogin()" @keyup.enter="actionLogin()">Login</button>
             </div>
           </div>
+
+          <div class="login-form col-md-6 col-xs-12" v-else>
+            <p class="login-text">Password Reset</p>
+            <input type="text" placeholder="Email" v-model="emailReset" class="login-value" />
+            <p v-if="error" class="error-mes">{{ errorEmail }}</p>
+            <div class="action-login-resset">
+              <button class="action-login" @click="sendEmailResetPassWord()" @keyup.enter="actionLogin()">Reset</button>
+            </div>
+          </div>
+
+          <div class="login-new-account-mobile">
+              If tou are not a user,
+              <a @click="showPopup">New Registration></a> By regisering as a new user, you are agreeing to the TravelQA's
+              <a
+                href=""
+              >Term of Service</a> and
+              <a href="">Privacy Policy</a>
+            </div>
         </div>
       </div>
     </div>
@@ -44,45 +67,123 @@
 
 <script>
 import request from '../../request/request'
+import { URL } from '../api/URL'
 export default {
   name: 'Login',
   data () {
     return {
       loading: false,
-      login: {
-        email: '1234',
-        password: '1234'
-      },
+      resetPassWord: false,
+      // login
+      error: '',
       email: '',
-      password: ''
+      password: '',
+      // reset pass word
+      emailReset: '',
+      errorEmail: ''
+    }
+  },
+
+  created () {
+    if (localStorage.getItem('user')) {
+      // this.$router.push({ path: '/home' })
+    } else {
+      localStorage.setItem('user', null)
     }
   },
 
   methods: {
+    loginNotAccount () {
+      this.$router.push({ path: '/home' })
+    },
+
+    loginFacebook () {
+      let self = this
+      FB.login(function (response) {
+        if (response.authResponse) {
+          FB.api('/me', function (user) {
+            let data = {
+              fb_access_token: response.authResponse.accessToken
+            }
+
+            request({
+              url: '/auth/login_fb/',
+              method: 'post',
+              data: JSON.stringify(data)
+            })
+              .then(res => {
+                localStorage.setItem('user', JSON.stringify(res))
+                self.$router.push({ path: '/home' })
+              })
+              .catch((e) => {
+                if (e.response) {
+                  self.error = 'Enter a valid email address and password.'
+                }
+
+                if (e.response.status === '401') {
+                  self.$router.push({ path: '/login' })
+                }
+              })
+          })
+        } else {
+          console.log('User cancelled login or did not fully authorize.')
+        }
+      })
+    },
+
     showPopup () {
       this.$modal.show('create-new-account')
     },
 
     actionLogin () {
+      if (!this.email || !this.password) return
+
       const data = {
         email: this.email,
         password: this.password
       }
 
-      if (this.login.email !== this.email || this.login.password !== this.password) {
-        return
+      request({
+        url: '/auth/login_email/',
+        method: 'post',
+        data: JSON.stringify(data)
+      })
+        .then(res => {
+          localStorage.setItem('user', JSON.stringify(res))
+          this.$router.push({ path: '/home' })
+        })
+        .catch((e) => {
+          if (e.response) {
+            this.error = 'Enter a valid email address and password.'
+          }
+
+          if (e.response.status === '401') {
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    sendEmailResetPassWord () {
+      if (!this.emailReset) return
+
+      const data = {
+        email: this.emailReset
       }
 
-      console.log('data', data)
       request({
-        url: '/',
-        method: 'get',
-        body: JSON.stringify(data)
-      }).then(res => {
-        let user = JSON.stringify({token: '123'})
-        localStorage.setItem('user', user)
+        url: URL.RESET_PASSWORD,
+        method: 'post',
+        data: JSON.stringify(data)
       })
-      this.$router.push({ path: '/home' })
+        .then(res => {
+          localStorage.setItem('user', JSON.stringify(res))
+          this.$router.push({ path: '/' })
+        })
+        .catch((e) => {
+          if (e.response) {
+            this.error = 'Enter a valid email address'
+          }
+        })
     }
   }
 }
@@ -94,7 +195,7 @@ export default {
   height: 100vh;
   padding: 4% 8%;
   display: flex;
-    align-items: center;
+  align-items: center;
 }
 
 .login {
@@ -184,13 +285,37 @@ export default {
   outline: none;
 }
 
+.error-mes {
+  color: red;
+}
+
+.use-without-login {
+  background-color: #4267B2;
+  border: 1px solid #4267B2;
+  color: white;
+  padding: 5px 20px;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 15px;
+}
+
+.login-new-account-mobile {
+  display: none;
+}
+
 @media only screen and (max-width: 600px) {
+  .page-login {
+    background-color: white;
+  }
+
   .login {
     padding: 20px;
+    border: none;
   }
 
   .login h1 {
     font-size: 50px;
+    color: #2761E6;
   }
 
   .login-title {
@@ -206,6 +331,7 @@ export default {
 
   .login-new-account {
     font-size: 16px;
+    display: none;
   }
 
   .login-form {
@@ -220,12 +346,27 @@ export default {
     height: 35px;
   }
 
-  .fa-facebook-square {
+  .fa-facebook {
     font-size: 24px;
   }
 
   .login-form {
     border: none;
+  }
+
+  .use-without-login{
+    border: 1px solid #2760E6;
+    background-color: #2760E6;
+  }
+
+  .login-new-account-mobile {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+    font-size: 16px;
+    color: gray;
+    font-weight: 400;
+    padding: 0 15px;
   }
 }
 

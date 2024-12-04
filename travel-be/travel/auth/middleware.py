@@ -22,7 +22,10 @@ class AuthenticationMiddleware(object):
         if auth is None:
             return UnauthorizedToken()
         raw_token = self._parse_authorization_header(auth)
-        return decode_token(raw_token)
+        try:
+            return decode_token(raw_token)
+        except Exception as e:
+            return UnauthorizedToken(e)
 
     def _parse_authorization_header(self, auth_string):
         matched = self.re_auth_header.match(auth_string)

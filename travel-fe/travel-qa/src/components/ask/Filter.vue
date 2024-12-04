@@ -1,0 +1,198 @@
+<template>
+  <div>
+    <div v-if="!loading">
+      <div class="filter-category">
+        <p class="filter-title">Category</p>
+        <div v-for="category in categorys" :key="category.id" class="category-item">
+          <input type="checkbox" name="" id="" @change="checkcategory(category)">
+          <p>{{ category.name }}</p>
+        </div>
+      </div>
+
+      <div v-if="showborder" class="border-content-ask"></div>
+      <div v-else class="border-content-profile"></div>
+
+      <div class="filter-area">
+        <p class="filter-title">Area</p>
+
+        <div v-for="(area, index) in areas" :key="index" class="list-option">
+          <select  v-model="area.start" @change="handleArea()">
+            <option value="">--- Select ---</option>
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="audi">Audi</option>
+          </select>
+
+          <select v-model="area.end" @change="handleArea()">
+            <option value="">--- Select ---</option>
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="audi">Audi</option>
+          </select>
+        </div>
+
+        <div class="add-area">
+          <p class="area-item" @click="addArea"> + </p>
+          <p>create</p>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <b-spinner class="m-5"></b-spinner>
+    </div>
+  </div>
+</template>
+
+<script>
+import request from '../../../request/request'
+import { URL } from '../../api/URL'
+import { EventBus } from '../../eventBus'
+
+export default {
+  name: 'Filter',
+  props: ['showborder'],
+  data () {
+    return {
+      categorys: [],
+      areas: [{ start: '', end: '' }],
+      loading: true,
+      listFilter: [],
+      listCategory: [],
+      listArea: []
+    }
+  },
+
+  created () {
+    this.getListCategory()
+    this.getListArea()
+  },
+
+  methods: {
+    getListCategory () {
+      request({
+        url: URL.CATEGORY,
+        method: 'get'
+      })
+        .then(res => {
+          this.categorys = res.data
+          this.loading = false
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    getListArea () {
+      request({
+        url: URL.AREA,
+        method: 'get'
+      })
+        .then(res => {
+          this.areas = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    },
+
+    addArea () {
+      this.areas.push({
+        start: '',
+        end: ''
+      })
+    },
+
+    checkcategory (category) {
+      if (this.listFilter.filter(el => el === category.name).length > 0) {
+        this.listFilter = this.listFilter.filter(el => el !== category.name)
+        this.listCategory = this.listCategory.filter(el => el !== category.id)
+      } else {
+        this.listFilter.push(category.name)
+        this.listCategory.push(category.id)
+      }
+
+      EventBus.$emit('addFilter', this.listFilter)
+      EventBus.$emit('addCategory', this.listCategory)
+    },
+
+    handleArea () {
+      let listArea = this.areas.map(el => `${el.start} > ${el.end}`)
+      EventBus.$emit('addFilter', this.listFilter.concat(listArea))
+      EventBus.$emit('addArea', this.areas)
+    }
+  }
+}
+</script>
+
+<style lang="css" scoped>
+.filter-category {
+  margin-left: 10px;
+}
+
+.filter-title {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.category-item {
+  display: flex;
+  margin-left: 15px;
+  align-items: center;
+  line-height: 0;
+}
+
+.category-item p {
+  padding-top: 15px;
+  margin-left: 15px;
+}
+
+.filter-area {
+  margin-left: 10px;
+}
+
+.list-option {
+  margin-left: 10px
+}
+
+.list-option select {
+  width: 45%;
+  max-width: 150px;
+  height: 35px;
+  padding-left: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.add-area {
+  display: flex;
+  margin-left: 10px
+}
+
+.area-item {
+  border: 2px solid #ccc;
+  padding: 1px 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.border-content-ask {
+  border-top: 1px solid #2761E6;
+  height: 5px;
+  background-color: #CBE0FF;
+  margin-bottom: 5px;
+}
+
+.border-content-profile {
+  border-bottom: 1px solid #CBE0FF;
+  margin-left: 10px;
+}
+</style>

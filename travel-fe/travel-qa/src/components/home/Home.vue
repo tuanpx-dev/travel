@@ -1,92 +1,83 @@
 <template>
-  <div class="container home">
-    <Header/>
-    <div class="row home-content">
-      <div class="row home-list-qa col-md-9">
-        <div class="home-sidebar col-md-4">
-          <select name="" id="" class="select-region">
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
-          </select>
-          <div>
-            <div v-for="option in options" :key="option.value" class="home-add-option">
-              <input type="checkbox">
-              <p>{{ option.name }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-8 list-qa">
-          <div class="home-header">
-            <input type="search" placeholder="search"/>
-          </div>
-          <div class="home-menu">
-            <button class="home-menu-page">Popular</button>
-            <button class="home-menu-page new">New</button>
-          </div>
-          <div class="home-list" v-for="question in questions" :key="question.id">
-            <Question :question="question" :page="'home'"/>
+  <div class="row home-content">
+    <div class="home-list-qa col-md-9 col-xs-12">
+      <div class="home-sidebar col-md-4 col-xs-0">
+        <select name="" id="" class="select-region">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <div>
+          <div v-for="option in options" :key="option.value" class="home-add-option">
+            <input type="checkbox">
+            <p>{{ option.name }}</p>
           </div>
         </div>
       </div>
-
-      <div class="col-md-3"></div>
+      <router-view/>
     </div>
+
+    <div class="col-md-3 col-xs-0"></div>
   </div>
 </template>
 
 <script>
 import Header from '../header/header'
 import request from '../../../request/request'
+import ListQuestion from './ListQuestion'
 import Question from './Question'
-import { QUESTIONS, OPTIONS } from '../Constant'
+import { URL } from '../../api/URL'
+import Paginate from 'vuejs-paginate'
 
 export default {
   name: 'Home',
 
   components: {
     Question,
-    Header
+    ListQuestion,
+    Header,
+    Paginate
   },
 
   data () {
     return {
-      loading: false,
-      questions: QUESTIONS,
-      options: OPTIONS
+      options: []
     }
   },
 
   created () {
-    request({
-      url: '/',
-      method: 'get'
-    }).then(res => {
-    })
+    this.getCategory()
   },
 
-  methods: {}
+  methods: {
+    getCategory () {
+      request({
+        url: URL.CATEGORY,
+        method: 'get'
+      })
+        .then(res => {
+          this.options = res.data
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            localStorage.setItem('user', null)
+            this.$router.push({ path: '/login' })
+          }
+        })
+    }
+  }
 }
 </script>
 
 <style lang="css" scoped>
-.home-header {
-  margin-bottom: 30px;
-}
-
 .home-content {
   margin-top: -40px;
 }
 
-.home-header input {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  height: 40px;
-  outline: none;
-  padding: 20px;
-  width: 100%;
-  margin: 0 auto;
+.home-list-qa {
+  display: flex;
+  padding: 0;
 }
 
 .home-sidebar {
@@ -94,6 +85,7 @@ export default {
   max-height: 500px;
   text-align: left;
   margin-top: 73px;
+  margin-right: 10px;
 }
 
 .select-region {
@@ -132,5 +124,20 @@ export default {
   padding: 5px 15px;
   color: black;
   background-color: white;
+}
+
+/* panigation */
+.b-pagination {
+  float: right;
+}
+
+@media only screen and (max-width: 600px) {
+  .home-sidebar  {
+    display: none;
+  }
+
+  .home-content {
+    margin-top: 0;
+  }
 }
 </style>

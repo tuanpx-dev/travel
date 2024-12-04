@@ -45,8 +45,37 @@ def decode_token(token, algorithm='HS256'):
     )
 
 
-class Token(object):
+class AbstractToken(object):
+    def __init__(self):
+        self._errors = []
+
+    @property
+    def id(self):
+        return None
+
+    @property
+    def username(self):
+        return None
+
+    @property
+    def expire_at(self):
+        return None
+
+    @property
+    def created_at(self):
+        return None
+
+    @property
+    def user(self):
+        return None
+
+    def is_valid(self):
+        return False
+
+
+class Token(AbstractToken):
     def __init__(self, id, username, expire_at, created_at):
+        super(Token, self).__init__()
         self._id = id
         self._username = username
         self._created_at = created_at if isinstance(created_at, datetime)\
@@ -91,27 +120,7 @@ class Token(object):
             return False
         return True
 
-class UnauthorizedToken(object):
+class UnauthorizedToken(AbstractToken):
 
-    @property
-    def id(self):
-        return None
-
-    @property
-    def username(self):
-        return None
-
-    @property
-    def expire_at(self):
-        return None
-
-    @property
-    def created_at(self):
-        return None
-
-    @property
-    def user(self):
-        return None
-
-    def is_valid(self):
-        return False
+    def __init__(self, *errors):
+        self._errors = errors
